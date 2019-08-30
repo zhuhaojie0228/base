@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改线路')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-line-edit" th:object="${line}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>线路代码：</label>
+                        <div class="col-sm-8">
+                            <input name="number" th:field="*{number}" class="form-control" type="text" maxlength="30" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>线路名称：</label>
+                        <div class="col-sm-8">
+                            <input  name="name" th:field="*{name}" class="form-control" type="text" maxlength="30" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>简称：</label>
+                        <div class="col-sm-8">
+                            <input name="shortName" th:field="*{shortName}" class="form-control" type="text" maxlength="30" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>线路等级：</label>
+                        <div class="col-sm-8">
+                            <select name="classid" class="form-control m-b" th:with="type=${@dict.getType('sys_line_classid')}" th:field="*{classid}" required>
+                                <option value=""></option>
+                                <option th:each="dict:${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>线路类型：</label>
+                        <div class="col-sm-8">
+                            <select name="lineNumber" class="form-control m-b" th:with="type=${@dict.getType('sys_line_number')}" th:field="*{lineNumber}" required>
+                                <option value=""></option>
+                                <option th:each="dict:${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>线路级别：</label>
+                        <div class="col-sm-8">
+                            <select name="level" class="form-control m-b" th:with="type=${@dict.getType('sys_line_level')}" th:field="*{level}" required>
+                                <option value=""></option>
+                                <option th:each="dict:${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>排序号：</label>
+                        <div class="col-sm-8">
+                            <input name="sort" class="form-control" type="text" maxlength="30" th:field="*{sort}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span style="color: red; ">*</span>线路描述：</label>
+                        <div class="col-sm-10">
+                            <textarea name="remark" class="form-control" required>[[*{remark}]]</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: select2-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/line";
+        $("#form-line-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-line-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>
