@@ -19,19 +19,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMessageVo">
-        select id, system, opr_table, message, type, syn_status, err_cause, create_by, create_time, update_by, update_time from sys_message
+        select id, system, opr_table, message, type, syn_status, err_cause, create_by, create_time, update_by, update_time
+        from sys_message
     </sql>
 
     <select id="selectMessageList" parameterType="Message" resultMap="MessageResult">
         <include refid="selectMessageVo"/>
-        <where>  
-            <if test="system != null  and system != ''"> and system = #{system}</if>
-            <if test="oprTable != null  and oprTable != ''"> and opr_table = #{oprTable}</if>
-            <if test="message != null  and message != ''"> and message = #{message}</if>
-            <if test="type != null  and type != ''"> and type = #{type}</if>
-            <if test="synStatus != null  and synStatus != ''"> and syn_status = #{synStatus}</if>
-            <if test="errCause != null  and errCause != ''"> and err_cause = #{errCause}</if>
-        </where>
+        where syn_status!='同步成功'
+        <if test="system != null  and system != ''"> and system = #{system}</if>
+        <if test="oprTable != null  and oprTable != ''"> and opr_table = #{oprTable}</if>
+        <if test="message != null  and message != ''"> and message = #{message}</if>
+        <if test="type != null  and type != ''"> and type = #{type}</if>
+        <if test="synStatus != null  and synStatus != ''"> and syn_status = #{synStatus}</if>
+        <if test="errCause != null  and errCause != ''"> and err_cause = #{errCause}</if>
+        order by id
     </select>
     
     <select id="selectMessageById" parameterType="Long" resultMap="MessageResult">

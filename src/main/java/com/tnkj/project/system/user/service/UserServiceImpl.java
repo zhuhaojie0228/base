@@ -184,7 +184,10 @@ public class UserServiceImpl implements IUserService
                 throw new BusinessException("不允许删除超级管理员用户");
             }
         }
-        return userMapper.deleteUserByIds(userIds);
+        int row=userMapper.deleteUserByIds(userIds);
+        //删除同步消息信息
+        synDelUser(ids);
+        return row;
     }
 
     /**
@@ -203,16 +206,9 @@ public class UserServiceImpl implements IUserService
         // 新增用户信息
         int rows = userMapper.insertUser(user);
         //新增同步消息信息
-        Message message =new Message();
-        message.setSystem("ledger");
-        message.setOprTable("sys_user");
-        message.setType("add");
-        message.setSynStatus("未同步");
-        JSONObject userMessage=messageService.getUserMessage(user,"add");
-        message.setMessage(userMessage.toString());
-        int result =messageService.insertMessage(message);
+        synUerMessage(user,"add");
 
-                // 新增用户岗位关联
+        // 新增用户岗位关联
         insertUserPost(user);
         // 新增用户与角色管理
         insertUserRole(user);
@@ -239,7 +235,10 @@ public class UserServiceImpl implements IUserService
         userPostMapper.deleteUserPostByUserId(userId);
         // 新增用户与岗位管理
         insertUserPost(user);
-        return userMapper.updateUser(user);
+        int row =userMapper.updateUser(user);
+        //修改同步消息信息
+        synUerMessage(user,"edit");
+        return row;
     }
 
     /**
@@ -264,7 +263,10 @@ public class UserServiceImpl implements IUserService
     public int resetUserPwd(User user)
     {
         user.setPassword(passwordService.encryptPassword(user.getPassword()));
-        return updateUserInfo(user);
+        int row =updateUserInfo(user);
+        //修改同步消息信息
+        synUerMessage(user,"edit");
+        return row;
     }
 
     /**
@@ -497,5 +499,28 @@ public class UserServiceImpl implements IUserService
             throw new BusinessException("不允许修改超级管理员用户");
         }
         return userMapper.updateUser(user);
+    }
+
+    public void synUerMessage(User user,String type){
+        Message message =new Message();
+        message.setSystem("ledger");
+        message.setOprTable("sys_user");
+        message.setType(type);
+        message.setSynStatus("未同步");
+        JSONObject userMessage=messageService.getUserMessage(user);
+        message.setMessage(userMessage.toString());
+        int result =messageService.insertMessage(message);
+    }
+
+    public void synDelUser(String ids){
+        Message message =new Message();
+        message.setSystem("ledger");
+        message.setOprTable("sys_user");
+        message.setType("delete");
+        message.setSynStatus("未同步");
+        JSONObject userMessage=new JSONObject();
+        userMessage.put("ids",ids);
+        message.setMessage(userMessage.toString());
+        int result =messageService.insertMessage(message);
     }
 }

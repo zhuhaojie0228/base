@@ -68,5 +68,5 @@ public interface IMessageService
      * @param user 用户
      * @return 用户同步
      */
-    public JSONObject getUserMessage(User user,String type);
+    public JSONObject getUserMessage(User user);
 }

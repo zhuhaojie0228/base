@@ -23,7 +23,7 @@ import com.tnkj.common.utils.text.Convert;
 public class MessageServiceImpl implements IMessageService 
 {
     @Autowired
-    private MessageMapper messageMapper;
+private MessageMapper messageMapper;
 
     /**
      * 查询同步消息
@@ -58,7 +58,6 @@ public class MessageServiceImpl implements IMessageService
     @Override
     public int insertMessage(Message message)
     {
-        message.setCreateBy(ShiroUtils.getLoginName());
         message.setCreateTime(DateUtils.getNowDate());
         return messageMapper.insertMessage(message);
     }
@@ -72,7 +71,6 @@ public class MessageServiceImpl implements IMessageService
     @Override
     public int updateMessage(Message message)
     {
-        message.setUpdateBy(ShiroUtils.getLoginName());
         message.setUpdateTime(DateUtils.getNowDate());
         return messageMapper.updateMessage(message);
     }
@@ -107,9 +105,8 @@ public class MessageServiceImpl implements IMessageService
      * @return 用户同步
      */
     @Override
-    public JSONObject getUserMessage(User user,String type) {
+    public JSONObject getUserMessage(User user) {
         JSONObject userMessage=new JSONObject();
-        userMessage.put("type",type);
         userMessage.put("userId",user.getUserId());
         userMessage.put("loginName",user.getLoginName());
         userMessage.put("deptId",user.getDeptId());
