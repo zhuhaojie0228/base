@@ -42,6 +42,9 @@
                 <a class="btn btn-primary" onclick="run()" shiro:hasPermission="monitor:job:changeStatus">
                     <i class="fa fa-edit"></i> 同步
                 </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="syn:message:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
                 <!--<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="syn:message:add">
                     <i class="fa fa-plus"></i> 添加
                 </a>

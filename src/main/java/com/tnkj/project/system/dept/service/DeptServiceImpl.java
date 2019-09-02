@@ -9,6 +9,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.tnkj.framework.web.domain.DeptZtree;
 import com.tnkj.project.syn.message.domain.Message;
 import com.tnkj.project.syn.message.service.IMessageService;
+import com.tnkj.project.system.dict.domain.DictData;
+import com.tnkj.project.system.dict.service.IDictDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,9 @@ public class DeptServiceImpl implements IDeptService
 
     @Autowired
     private IMessageService messageService;
+
+    @Autowired
+    private IDictDataService dictDataService;
 
     /**
      * 查询部门管理数据
@@ -311,27 +316,37 @@ public class DeptServiceImpl implements IDeptService
     }
 
     public void synDeptMessage(Dept dept,String type){
-        Message message =new Message();
-        message.setSystem("ledger");
-        message.setOprTable("sys_dept");
-        message.setType(type);
-        message.setSynStatus("未同步");
-        JSONObject deptMessage=messageService.getDeptMessage(dept);
-        deptMessage.put("type",type);
-        message.setMessage(deptMessage.toString());
-        int result =messageService.insertMessage(message);
+        List<DictData> sysList=dictDataService.selectDictDataByType("syn_system");
+        if(sysList!=null && !sysList.isEmpty()){
+            for(int i=0;i<sysList.size();i++){
+                Message message =new Message();
+                message.setSystem(sysList.get(i).getDictValue());
+                message.setOprTable("sys_dept");
+                message.setType(type);
+                message.setSynStatus("未同步");
+                JSONObject deptMessage=messageService.getDeptMessage(dept);
+                deptMessage.put("type",type);
+                message.setMessage(deptMessage.toString());
+                int result =messageService.insertMessage(message);
+            }
+        }
     }
 
     public void synDelDept(String id){
-        Message message =new Message();
-        message.setSystem("ledger");
-        message.setOprTable("sys_dept");
-        message.setType("delete");
-        message.setSynStatus("未同步");
-        JSONObject deptMessage=new JSONObject();
-        deptMessage.put("id",id);
-        deptMessage.put("type","delete");
-        message.setMessage(deptMessage.toString());
-        int result =messageService.insertMessage(message);
+        List<DictData> sysList=dictDataService.selectDictDataByType("syn_system");
+        if(sysList!=null && !sysList.isEmpty()){
+            for(int i=0;i<sysList.size();i++){
+                Message message =new Message();
+                message.setSystem(sysList.get(i).getDictValue());
+                message.setOprTable("sys_dept");
+                message.setType("delete");
+                message.setSynStatus("未同步");
+                JSONObject deptMessage=new JSONObject();
+                deptMessage.put("id",id);
+                deptMessage.put("type","delete");
+                message.setMessage(deptMessage.toString());
+                int result =messageService.insertMessage(message);
+            }
+        }
     }
 }

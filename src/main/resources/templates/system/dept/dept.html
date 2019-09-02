@@ -50,7 +50,7 @@
 		var editFlag = [[${@permission.hasPermi('system:dept:edit')}]];
 		var removeFlag = [[${@permission.hasPermi('system:dept:remove')}]];
 		var datas = [[${@dict.getType('sys_normal_disable')}]];
-		var kindDatas = [[${@dict.getType('sys_dept_kind')}]];
+		var levelDatas = [[${@dict.getType('sys_dept_level')}]];
 		var prefix = ctx + "system/dept"
 
 		$(function() {
@@ -74,12 +74,12 @@
 					width: '20%'
 		        },
 				{
-					field: 'kind',
+					field: 'level',
 					title: '机构类型',
 					align: "left",
 					width: '10%',
 					formatter: function(value, item, index) {
-						return $.table.selectDictLabel(kindDatas,value);
+						return $.table.selectDictLabel(levelDatas,value);
 					}
 				},
 		        {

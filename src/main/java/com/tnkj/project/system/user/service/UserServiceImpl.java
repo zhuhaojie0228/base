@@ -7,6 +7,8 @@ import java.util.UUID;
 import com.alibaba.fastjson.JSONObject;
 import com.tnkj.project.syn.message.domain.Message;
 import com.tnkj.project.syn.message.service.IMessageService;
+import com.tnkj.project.system.dict.domain.DictData;
+import com.tnkj.project.system.dict.service.IDictDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,9 @@ public class UserServiceImpl implements IUserService
 
     @Autowired
     private IMessageService messageService;
+
+    @Autowired
+    private IDictDataService dictDataService;
 
     /**
      * 根据条件分页查询用户列表
@@ -502,27 +507,37 @@ public class UserServiceImpl implements IUserService
     }
 
     public void synUerMessage(User user,String type){
-        Message message =new Message();
-        message.setSystem("ledger");
-        message.setOprTable("sys_user");
-        message.setType(type);
-        message.setSynStatus("未同步");
-        JSONObject userMessage=messageService.getUserMessage(user);
-        userMessage.put("type",type);
-        message.setMessage(userMessage.toString());
-        int result =messageService.insertMessage(message);
+        List<DictData> sysList=dictDataService.selectDictDataByType("syn_system");
+        if(sysList!=null && !sysList.isEmpty()){
+            for(int i=0;i<sysList.size();i++){
+                Message message =new Message();
+                message.setSystem(sysList.get(i).getDictValue());
+                message.setOprTable("sys_user");
+                message.setType(type);
+                message.setSynStatus("未同步");
+                JSONObject userMessage=messageService.getUserMessage(user);
+                userMessage.put("type",type);
+                message.setMessage(userMessage.toString());
+                int result =messageService.insertMessage(message);
+            }
+        }
     }
 
     public void synDelUser(String ids){
-        Message message =new Message();
-        message.setSystem("ledger");
-        message.setOprTable("sys_user");
-        message.setType("delete");
-        message.setSynStatus("未同步");
-        JSONObject userMessage=new JSONObject();
-        userMessage.put("ids",ids);
-        userMessage.put("type","delete");
-        message.setMessage(userMessage.toString());
-        int result =messageService.insertMessage(message);
+        List<DictData> sysList=dictDataService.selectDictDataByType("syn_system");
+        if(sysList!=null && !sysList.isEmpty()){
+            for(int i=0;i<sysList.size();i++){
+                Message message =new Message();
+                message.setSystem(sysList.get(i).getDictValue());
+                message.setOprTable("sys_user");
+                message.setType("delete");
+                message.setSynStatus("未同步");
+                JSONObject userMessage=new JSONObject();
+                userMessage.put("ids",ids);
+                userMessage.put("type","delete");
+                message.setMessage(userMessage.toString());
+                int result =messageService.insertMessage(message);
+            }
+        }
     }
 }
