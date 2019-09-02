@@ -28,6 +28,14 @@ public interface MessageMapper
     public List<Message> selectMessageList(Message message);
 
     /**
+     * 查询所有的同步消息列表
+     *
+     * @param message 同步消息
+     * @return 同步消息集合
+     */
+    public List<Message> selectAllMessage(Message message);
+
+    /**
      * 新增同步消息
      * 
      * @param message 同步消息

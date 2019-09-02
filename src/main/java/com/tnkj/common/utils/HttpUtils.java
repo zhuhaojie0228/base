@@ -49,10 +49,10 @@ public class HttpUtils
             if(StringUtils.isNotEmpty(tempMes.getSynStatus()) && !"同步成功".equals(tempMes.getSynStatus())){
                 try {
                     String respContent = null;
-                    String url=getUrl(tempMes.getSystem(),tempMes.getType());
+                    String url=getUrl(tempMes.getSystem(),tempMes.getOprTable());
                     if(StringUtils.isEmpty(url)){
                         tempMes.setSynStatus("同步失败");
-                        tempMes.setErrCause(tempMes.getSystem()+"-"+tempMes.getType()+"接口连接地址为空，请检查");
+                        tempMes.setErrCause(tempMes.getSystem()+"-"+tempMes.getOprTable()+"接口连接地址为空，请检查");
                         tempMes.setUpdateTime(DateUtils.getNowDate());
                         messageMapper.updateMessage(tempMes);
                         return;
@@ -104,11 +104,20 @@ public class HttpUtils
         }
     }
 
-    public String getUrl(String system,String type){
-        String configKey="sys."+system+"."+type;
-        Config config=configService.getConfigBykey(configKey);
-        if(config!=null && StringUtils.isNotEmpty(config.getConfigValue())){
-            return config.getConfigValue();
+    public String getUrl(String system,String table){
+        if(StringUtils.isNotEmpty(table)){
+            String configKey=null;
+            if("sys_user".equals(table)){
+                configKey="sys."+system+".synUser";
+            }else if("sys_dept".equals(table)){
+                configKey="sys."+system+".synDept";
+            }
+            if(StringUtils.isNotEmpty(configKey)){
+                Config config=configService.getConfigBykey(configKey);
+                if(config!=null && StringUtils.isNotEmpty(config.getConfigValue())){
+                    return config.getConfigValue();
+                }
+            }
         }
         return null;
     }

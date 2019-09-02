@@ -116,9 +116,7 @@ public class Message extends BaseEntity
             .append("type", getType())
             .append("synStatus", getSynStatus())
             .append("errCause", getErrCause())
-            .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .toString();
     }

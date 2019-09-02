@@ -50,7 +50,7 @@ public class MessageController extends BaseController
     public TableDataInfo list(Message message)
     {
         startPage();
-        List<Message> list = messageService.selectMessageList(message);
+        List<Message> list = messageService.selectAllMessage(message);
         return getDataTable(list);
     }
 
@@ -121,5 +121,16 @@ public class MessageController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(messageService.deleteMessageByIds(ids));
+    }
+
+    /**
+     * 同步详情
+     */
+    @GetMapping("/detail/{id}")
+    public String detail(@PathVariable("id") Long id, ModelMap mmap)
+    {
+        Message message = messageService.selectMessageById(id);
+        mmap.put("message",message);
+        return prefix + "/detail";
     }
 }

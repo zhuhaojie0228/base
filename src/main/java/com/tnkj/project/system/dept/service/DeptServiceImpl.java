@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tnkj.framework.web.domain.DeptZtree;
+import com.tnkj.project.syn.message.domain.Message;
+import com.tnkj.project.syn.message.service.IMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,9 @@ public class DeptServiceImpl implements IDeptService
 {
     @Autowired
     private DeptMapper deptMapper;
+
+    @Autowired
+    private IMessageService messageService;
 
     /**
      * 查询部门管理数据
@@ -159,7 +165,10 @@ public class DeptServiceImpl implements IDeptService
     @Override
     public int deleteDeptById(String deptId)
     {
-        return deptMapper.deleteDeptById(deptId);
+        int row=deptMapper.deleteDeptById(deptId);
+        //删除同步消息信息
+        synDelDept(deptId);
+        return row;
     }
 
     /**
@@ -180,7 +189,10 @@ public class DeptServiceImpl implements IDeptService
         dept.setCreateBy(ShiroUtils.getLoginName());
         dept.setId(UUID.randomUUID().toString());
         //dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
-        return deptMapper.insertDept(dept);
+        int row=deptMapper.insertDept(dept);
+        //新增同步消息信息
+        synDeptMessage(dept,"add");
+        return row;
     }
 
     /**
@@ -204,6 +216,8 @@ public class DeptServiceImpl implements IDeptService
         }*/
         dept.setUpdateBy(ShiroUtils.getLoginName());
         int result = deptMapper.updateDept(dept);
+        //新增同步消息信息
+        synDeptMessage(dept,"edit");
         /*if (UserConstants.DEPT_NORMAL.equals(dept.getStatus()))
         {
             // 如果该部门是启用状态，则启用该部门的所有上级部门
@@ -235,10 +249,10 @@ public class DeptServiceImpl implements IDeptService
     public void updateDeptChildren(String deptId, String newAncestors, String oldAncestors)
     {
         List<Dept> children = deptMapper.selectChildrenDeptById(deptId);
-        for (Dept child : children)
+        /*for (Dept child : children)
         {
-            //child.setAncestors(child.getAncestors().replace(oldAncestors, newAncestors));
-        }
+            child.setAncestors(child.getAncestors().replace(oldAncestors, newAncestors));
+        }*/
         if (children.size() > 0)
         {
             deptMapper.updateDeptChildren(children);
@@ -256,10 +270,10 @@ public class DeptServiceImpl implements IDeptService
         Dept dept = new Dept();
         dept.setParentId(deptId);
         List<Dept> childrens = deptMapper.selectDeptList(dept);
-        for (Dept children : childrens)
+        /*for (Dept children : childrens)
         {
-            //children.setAncestors(ancestors + "," + dept.getParentId());
-        }
+            children.setAncestors(ancestors + "," + dept.getParentId());
+        }*/
         if (childrens.size() > 0)
         {
             deptMapper.updateDeptChildren(childrens);
@@ -294,5 +308,30 @@ public class DeptServiceImpl implements IDeptService
             return UserConstants.DEPT_NAME_NOT_UNIQUE;
         }
         return UserConstants.DEPT_NAME_UNIQUE;
+    }
+
+    public void synDeptMessage(Dept dept,String type){
+        Message message =new Message();
+        message.setSystem("ledger");
+        message.setOprTable("sys_dept");
+        message.setType(type);
+        message.setSynStatus("未同步");
+        JSONObject deptMessage=messageService.getDeptMessage(dept);
+        deptMessage.put("type",type);
+        message.setMessage(deptMessage.toString());
+        int result =messageService.insertMessage(message);
+    }
+
+    public void synDelDept(String id){
+        Message message =new Message();
+        message.setSystem("ledger");
+        message.setOprTable("sys_dept");
+        message.setType("delete");
+        message.setSynStatus("未同步");
+        JSONObject deptMessage=new JSONObject();
+        deptMessage.put("id",id);
+        deptMessage.put("type","delete");
+        message.setMessage(deptMessage.toString());
+        int result =messageService.insertMessage(message);
     }
 }

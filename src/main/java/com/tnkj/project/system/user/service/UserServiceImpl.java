@@ -508,6 +508,7 @@ public class UserServiceImpl implements IUserService
         message.setType(type);
         message.setSynStatus("未同步");
         JSONObject userMessage=messageService.getUserMessage(user);
+        userMessage.put("type",type);
         message.setMessage(userMessage.toString());
         int result =messageService.insertMessage(message);
     }
@@ -520,6 +521,7 @@ public class UserServiceImpl implements IUserService
         message.setSynStatus("未同步");
         JSONObject userMessage=new JSONObject();
         userMessage.put("ids",ids);
+        userMessage.put("type","delete");
         message.setMessage(userMessage.toString());
         int result =messageService.insertMessage(message);
     }

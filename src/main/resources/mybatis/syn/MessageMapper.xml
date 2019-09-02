@@ -12,16 +12,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="type"    column="type"    />
         <result property="synStatus"    column="syn_status"    />
         <result property="errCause"    column="err_cause"    />
-        <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectMessageVo">
-        select id, system, opr_table, message, type, syn_status, err_cause, create_by, create_time, update_by, update_time
+        select id, system, opr_table, message, type, syn_status, err_cause, create_time, update_time
         from sys_message
     </sql>
+
+    <select id="selectAllMessage" parameterType="Message" resultMap="MessageResult">
+        <include refid="selectMessageVo"/>
+        <where>
+            <if test="system != null  and system != ''"> and system = #{system}</if>
+            <if test="oprTable != null  and oprTable != ''"> and opr_table = #{oprTable}</if>
+            <if test="message != null  and message != ''"> and message = #{message}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="synStatus != null  and synStatus != ''"> and syn_status = #{synStatus}</if>
+            <if test="errCause != null  and errCause != ''"> and err_cause = #{errCause}</if>
+        </where>
+        order by id desc
+    </select>
 
     <select id="selectMessageList" parameterType="Message" resultMap="MessageResult">
         <include refid="selectMessageVo"/>
@@ -49,9 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="type != null  and type != ''">type,</if>
             <if test="synStatus != null  and synStatus != ''">syn_status,</if>
             <if test="errCause != null  and errCause != ''">err_cause,</if>
-            <if test="createBy != null  and createBy != ''">create_by,</if>
             <if test="createTime != null ">create_time,</if>
-            <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -61,9 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="type != null  and type != ''">#{type},</if>
             <if test="synStatus != null  and synStatus != ''">#{synStatus},</if>
             <if test="errCause != null  and errCause != ''">#{errCause},</if>
-            <if test="createBy != null  and createBy != ''">#{createBy},</if>
             <if test="createTime != null ">#{createTime},</if>
-            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
          </trim>
     </insert>
@@ -77,9 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="type != null  and type != ''">type = #{type},</if>
             <if test="synStatus != null  and synStatus != ''">syn_status = #{synStatus},</if>
             <if test="errCause != null  and errCause != ''">err_cause = #{errCause},</if>
-            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null ">create_time = #{createTime},</if>
-            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
         </trim>
         where id = #{id}

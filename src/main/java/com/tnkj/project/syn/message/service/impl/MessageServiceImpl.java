@@ -5,6 +5,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.tnkj.common.utils.DateUtils;
 import com.tnkj.common.utils.security.ShiroUtils;
+import com.tnkj.project.system.dept.domain.Dept;
 import com.tnkj.project.system.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,18 @@ private MessageMapper messageMapper;
     public List<Message> selectMessageList(Message message)
     {
         return messageMapper.selectMessageList(message);
+    }
+
+    /**
+     * 查询所有的同步消息列表
+     *
+     * @param message 同步消息
+     * @return 同步消息
+     */
+    @Override
+    public List<Message> selectAllMessage(Message message)
+    {
+        return messageMapper.selectAllMessage(message);
     }
 
     /**
@@ -122,5 +135,28 @@ private MessageMapper messageMapper;
         userMessage.put("status",user.getStatus());
         userMessage.put("delFlag",user.getDelFlag());
         return userMessage;
+    }
+
+    /**
+     * 机构信息映射
+     *
+     * @param dept 机构
+     * @return 机构同步
+     */
+    @Override
+    public JSONObject getDeptMessage(Dept dept) {
+        JSONObject deptMessage=new JSONObject();
+        deptMessage.put("id",dept.getId());
+        deptMessage.put("name",dept.getName());
+        deptMessage.put("shortName",dept.getShortName());
+        deptMessage.put("parentId",dept.getParentId());
+        deptMessage.put("level",dept.getLevel());
+        deptMessage.put("kind",dept.getKind());
+        deptMessage.put("classid",dept.getClassid());
+        deptMessage.put("sort",dept.getSort());
+        deptMessage.put("phone",dept.getPhone());
+        deptMessage.put("status",dept.getStatus());
+        deptMessage.put("delFlag",dept.getDelFlag());
+        return deptMessage;
     }
 }

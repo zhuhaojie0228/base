@@ -2,6 +2,7 @@ package com.tnkj.project.syn.message.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tnkj.project.syn.message.domain.Message;
+import com.tnkj.project.system.dept.domain.Dept;
 import com.tnkj.project.system.user.domain.User;
 
 import java.util.List;
@@ -29,6 +30,15 @@ public interface IMessageService
      * @return 同步消息集合
      */
     public List<Message> selectMessageList(Message message);
+
+    /**
+     * 查询所有的同步消息列表
+     *
+     * @param message 同步消息
+     * @return 同步消息集合
+     */
+    public List<Message> selectAllMessage(Message message);
+
 
     /**
      * 新增同步消息
@@ -69,4 +79,12 @@ public interface IMessageService
      * @return 用户同步
      */
     public JSONObject getUserMessage(User user);
+
+    /**
+     * 机构信息映射
+     *
+     * @param dept 机构
+     * @return 机构同步
+     */
+    public JSONObject getDeptMessage(Dept dept);
 }
