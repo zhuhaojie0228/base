@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改空调管理')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-air-edit" th:object="${message}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">系统标识：</label>
+                        <div class="col-sm-8">
+                            <input th:value="*{system}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">操作表：</label>
+                        <div class="col-sm-8">
+                            <input th:value="*{oprTable}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">同步类型：</label>
+                        <div class="col-sm-8">
+                            <input th:value="*{type}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">同步状态：</label>
+                        <div class="col-sm-8">
+                            <input th:value="*{synStatus}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">发送消息：</label>
+                        <div class="col-xs-10">
+                            <textarea class="form-control" readonly>[[*{message}]]</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">失败原因：</label>
+                        <div class="col-xs-10">
+                            <textarea class="form-control" readonly>[[*{errCause}]]</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">创建时间：</label>
+                        <div class="col-sm-8">
+                            <input th:value="${#dates.format(message.createTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">更新时间：</label>
+                        <div class="col-sm-8">
+                            <input th:value="${#dates.format(message.updateTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: select2-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "oa/air";
+        $("#form-air-edit").validate({
+            focusCleanup: true
+        });
+
+        $(function() {
+
+        })
+
+    </script>
+</body>
+</html>
