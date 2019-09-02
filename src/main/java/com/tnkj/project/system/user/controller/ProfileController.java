@@ -134,6 +134,8 @@ public class ProfileController extends BaseController
         currentUser.setSex(user.getSex());
         if (userService.updateUserInfo(currentUser) > 0)
         {
+            //修改同步消息信息
+            userService.synUerMessage(currentUser,"edit");
             setSysUser(userService.selectUserById(currentUser.getUserId()));
             return success();
         }

@@ -268,7 +268,7 @@ public class UserServiceImpl implements IUserService
     public int resetUserPwd(User user)
     {
         user.setPassword(passwordService.encryptPassword(user.getPassword()));
-        int row =updateUserInfo(user);
+        int row=updateUserInfo(user);
         //修改同步消息信息
         synUerMessage(user,"edit");
         return row;
@@ -503,9 +503,13 @@ public class UserServiceImpl implements IUserService
         {
             throw new BusinessException("不允许修改超级管理员用户");
         }
-        return userMapper.updateUser(user);
+        int row=userMapper.updateUser(user);
+        //修改同步消息信息
+        synUerMessage(user,"edit");
+        return row;
     }
 
+    @Override
     public void synUerMessage(User user,String type){
         List<DictData> sysList=dictDataService.selectDictDataByType("syn_system");
         if(sysList!=null && !sysList.isEmpty()){

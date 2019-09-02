@@ -173,4 +173,6 @@ public interface IUserService
      * @return 结果
      */
     public int changeStatus(User user);
+
+    public void synUerMessage(User user,String type);
 }
