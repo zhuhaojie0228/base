@@ -1,16 +1,19 @@
 package com.tnkj.project.system.user.controller;
 
 import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+import com.tnkj.project.syn.message.domain.Message;
+import com.tnkj.project.syn.message.service.IMessageService;
+import com.tnkj.project.system.dict.domain.DictData;
+import com.tnkj.project.system.dict.service.IDictDataService;
+import com.tnkj.project.system.user.mapper.UserMapper;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.tnkj.common.constant.UserConstants;
 import com.tnkj.common.utils.StringUtils;
@@ -45,6 +48,15 @@ public class UserController extends BaseController
 
     @Autowired
     private IPostService postService;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private IMessageService messageService;
+
+    @Autowired
+    private IDictDataService dictDataService;
 
     @RequiresPermissions("system:user:view")
     @GetMapping()
@@ -248,5 +260,39 @@ public class UserController extends BaseController
     public AjaxResult changeStatus(User user)
     {
         return toAjax(userService.changeStatus(user));
+    }
+
+    @Log(title = "同步重置密码", businessType = BusinessType.UPDATE)
+    @PostMapping("/synResetPwd")
+    @ResponseBody
+    public AjaxResult synResetPwd(@RequestBody String synMessage) {
+        JSONObject json=JSONObject.parseObject(synMessage);
+        if(json.containsKey("userId") && StringUtils.isNotEmpty(json.getString("userId")) && json.containsKey("password") && StringUtils.isNotEmpty(json.getString("password"))){
+            User user=new User();
+            user.setUserId(json.getString("userId"));
+            user.setPassword(json.getString("password"));
+            if (userMapper.updateUser(user) > 0) {
+                List<DictData> sysList=dictDataService.selectDictDataByType("syn_system");
+                if(sysList!=null && !sysList.isEmpty()){
+                    for(int i=0;i<sysList.size();i++){
+                        if(json.containsKey("system") && StringUtils.isNotEmpty(json.getString("system"))){
+                            if(!sysList.get(i).getDictValue().equals(json.getString("system"))){
+                                Message message =new Message();
+                                message.setSystem(sysList.get(i).getDictValue());
+                                message.setOprTable("sys_user");
+                                message.setType("edit");
+                                message.setSynStatus("未同步");
+                                JSONObject userMessage=messageService.getUserMessage(user);
+                                userMessage.put("type","edit");
+                                message.setMessage(userMessage.toString());
+                                int result =messageService.insertMessage(message);
+                            }
+                        }
+                    }
+                }
+                return success();
+            }
+        }
+        return error();
     }
 }
