@@ -55,7 +55,7 @@ public class HttpUtils
                         tempMes.setErrCause(tempMes.getSystem()+"-"+tempMes.getOprTable()+"接口连接地址为空，请检查");
                         tempMes.setUpdateTime(DateUtils.getNowDate());
                         messageMapper.updateMessage(tempMes);
-                        return;
+                        continue;
                     }
                     HttpPost httpPost = new HttpPost(url);
                     CloseableHttpClient client = HttpClients.createDefault();
@@ -72,7 +72,10 @@ public class HttpUtils
                         respContent = EntityUtils.toString(he, "UTF-8");
                     }else{
                         tempMes.setSynStatus("同步失败");
-                        tempMes.setErrCause("接口连接失败，非200");
+                        tempMes.setErrCause("接口连接失败，非200，请检查接口地址是否正确");
+                        tempMes.setUpdateTime(DateUtils.getNowDate());
+                        messageMapper.updateMessage(tempMes);
+                        continue;
                     }
                     if(StringUtils.isNotEmpty(respContent)){
                         log.info("#######HttpUtils.userOrDeptSyn-response_status:"+resp.getStatusLine().getStatusCode());
