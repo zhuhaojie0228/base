@@ -6,7 +6,7 @@
 	<groupId>com.tnkj</groupId>
 	<artifactId>base</artifactId>
 	<version>4.0.0</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>base</name>
 	<url>http://www.tnkj.vip</url>
