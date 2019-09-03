@@ -143,8 +143,8 @@
         });
 
         /* 同步当前所有未同步消息 */
-        function run(jobId, jobGroup) {
-            $.operate.post(ctx + "monitor/job" + "/run", { "jobId": 4, "jobId": 4, "jobGroup": "SYSTEM"});
+        function run() {
+            $.operate.post(ctx + "monitor/job" + "/runSyn");
             setTimeout(function(){
                 $.table.search();
             }, 1000);

@@ -1,6 +1,8 @@
 package com.tnkj.project.monitor.job.controller;
 
 import java.util.List;
+
+import com.tnkj.common.utils.HttpUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,5 +163,17 @@ public class JobController extends BaseController
     public boolean checkCronExpressionIsValid(Job job)
     {
         return jobService.checkCronExpressionIsValid(job.getCronExpression());
+    }
+
+    /**
+     * 任务调度立即执行一次
+     */
+    @Log(title = "定时任务", businessType = BusinessType.UPDATE)
+    @PostMapping("/runSyn")
+    @ResponseBody
+    public AjaxResult runSyn() {
+        HttpUtils http=new HttpUtils();
+        http.userOrDeptSyn();
+        return success();
     }
 }
