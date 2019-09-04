@@ -52,7 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
-		order by CAST(d.level AS UNSIGNED)
+		order by CAST(d.level AS UNSIGNED),d.sort
     </select>
 	
 	<select id="checkDeptExistUser" parameterType="String" resultType="int">

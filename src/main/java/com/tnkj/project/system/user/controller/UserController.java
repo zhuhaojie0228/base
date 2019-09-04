@@ -127,17 +127,8 @@ public class UserController extends BaseController
     @ResponseBody
     public AjaxResult addSave(@Validated User user)
     {
-        if (UserConstants.USER_NAME_NOT_UNIQUE.equals(userService.checkLoginNameUnique(user.getLoginName())))
-        {
+        if (UserConstants.USER_NAME_NOT_UNIQUE.equals(userService.checkLoginNameUnique(user.getLoginName()))) {
             return error("新增用户'" + user.getLoginName() + "'失败，登录账号已存在");
-        }
-        else if (UserConstants.USER_PHONE_NOT_UNIQUE.equals(userService.checkPhoneUnique(user)))
-        {
-            return error("新增用户'" + user.getLoginName() + "'失败，手机号码已存在");
-        }
-        else if (UserConstants.USER_EMAIL_NOT_UNIQUE.equals(userService.checkEmailUnique(user)))
-        {
-            return error("新增用户'" + user.getLoginName() + "'失败，邮箱账号已存在");
         }
         return toAjax(userService.insertUser(user));
     }
@@ -161,19 +152,9 @@ public class UserController extends BaseController
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(@Validated User user)
-    {
-        if (StringUtils.isNotNull(user.getUserId()) && User.isAdmin(user.getUserId()))
-        {
+    public AjaxResult editSave(@Validated User user) {
+        if (StringUtils.isNotNull(user.getUserId()) && User.isAdmin(user.getUserId())) {
             return error("不允许修改超级管理员用户");
-        }
-        else if (UserConstants.USER_PHONE_NOT_UNIQUE.equals(userService.checkPhoneUnique(user)))
-        {
-            return error("修改用户'" + user.getLoginName() + "'失败，手机号码已存在");
-        }
-        else if (UserConstants.USER_EMAIL_NOT_UNIQUE.equals(userService.checkEmailUnique(user)))
-        {
-            return error("修改用户'" + user.getLoginName() + "'失败，邮箱账号已存在");
         }
         return toAjax(userService.updateUser(user));
     }
