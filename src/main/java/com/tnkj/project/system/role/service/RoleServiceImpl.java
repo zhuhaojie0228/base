@@ -343,7 +343,7 @@ public class RoleServiceImpl implements IRoleService
      */
     public int deleteAuthUsers(Long roleId, String userIds)
     {
-        return userRoleMapper.deleteUserRoleInfos(roleId, Convert.toLongArray(userIds));
+        return userRoleMapper.deleteUserRoleInfos(roleId, Convert.toStrArray(userIds));
     }
 
     /**
