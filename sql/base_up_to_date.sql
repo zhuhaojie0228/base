@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2019-09-24 13:47:26
+Date: 2019-09-24 15:03:48
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -239,7 +239,7 @@ CREATE TABLE `qrtz_scheduler_state` (
 -- ----------------------------
 -- Records of qrtz_scheduler_state
 -- ----------------------------
-INSERT INTO `qrtz_scheduler_state` VALUES ('RuoyiScheduler', 'LAPTOP-CL0A1HLL1569303802439', '1569304046844', '15000');
+INSERT INTO `qrtz_scheduler_state` VALUES ('RuoyiScheduler', 'LAPTOP-CL0A1HLL1569306290355', '1569306953773', '15000');
 
 -- ----------------------------
 -- Table structure for `qrtz_simple_triggers`
@@ -316,10 +316,10 @@ CREATE TABLE `qrtz_triggers` (
 -- ----------------------------
 -- Records of qrtz_triggers
 -- ----------------------------
-INSERT INTO `qrtz_triggers` VALUES ('RuoyiScheduler', 'TASK_CLASS_NAME1', 'DEFAULT', 'TASK_CLASS_NAME1', 'DEFAULT', null, '1567411380000', '-1', '5', 'PAUSED', 'CRON', '1567411375000', '0', null, '2', '');
-INSERT INTO `qrtz_triggers` VALUES ('RuoyiScheduler', 'TASK_CLASS_NAME2', 'DEFAULT', 'TASK_CLASS_NAME2', 'DEFAULT', null, '1567411380000', '-1', '5', 'PAUSED', 'CRON', '1567411375000', '0', null, '2', '');
-INSERT INTO `qrtz_triggers` VALUES ('RuoyiScheduler', 'TASK_CLASS_NAME3', 'DEFAULT', 'TASK_CLASS_NAME3', 'DEFAULT', null, '1567411380000', '-1', '5', 'PAUSED', 'CRON', '1567411375000', '0', null, '2', '');
-INSERT INTO `qrtz_triggers` VALUES ('RuoyiScheduler', 'TASK_CLASS_NAME4', 'SYSTEM', 'TASK_CLASS_NAME4', 'SYSTEM', null, '1567411380000', '-1', '5', 'PAUSED', 'CRON', '1567411375000', '0', null, '-1', '');
+INSERT INTO `qrtz_triggers` VALUES ('RuoyiScheduler', 'TASK_CLASS_NAME1', 'DEFAULT', 'TASK_CLASS_NAME1', 'DEFAULT', null, '1569306290000', '-1', '5', 'PAUSED', 'CRON', '1569306290000', '0', null, '2', '');
+INSERT INTO `qrtz_triggers` VALUES ('RuoyiScheduler', 'TASK_CLASS_NAME2', 'DEFAULT', 'TASK_CLASS_NAME2', 'DEFAULT', null, '1569306300000', '-1', '5', 'PAUSED', 'CRON', '1569306290000', '0', null, '2', '');
+INSERT INTO `qrtz_triggers` VALUES ('RuoyiScheduler', 'TASK_CLASS_NAME3', 'DEFAULT', 'TASK_CLASS_NAME3', 'DEFAULT', null, '1569306300000', '-1', '5', 'PAUSED', 'CRON', '1569306290000', '0', null, '2', '');
+INSERT INTO `qrtz_triggers` VALUES ('RuoyiScheduler', 'TASK_CLASS_NAME4', 'SYSTEM', 'TASK_CLASS_NAME4', 'SYSTEM', null, '1569306300000', '-1', '5', 'PAUSED', 'CRON', '1569306290000', '0', null, '-1', '');
 
 -- ----------------------------
 -- Table structure for `sys_config`
@@ -962,6 +962,7 @@ CREATE TABLE `sys_oper_log` (
   `title` varchar(50) DEFAULT '' COMMENT '模块标题',
   `business_type` int(2) DEFAULT '0' COMMENT '业务类型（0其它 1新增 2修改 3删除）',
   `method` varchar(100) DEFAULT '' COMMENT '方法名称',
+  `request_method` varchar(10) DEFAULT '' COMMENT '请求方式',
   `operator_type` int(1) DEFAULT '0' COMMENT '操作类别（0其它 1后台用户 2手机端用户）',
   `oper_name` varchar(50) DEFAULT '' COMMENT '操作人员',
   `dept_name` varchar(50) DEFAULT '' COMMENT '部门名称',
@@ -969,11 +970,12 @@ CREATE TABLE `sys_oper_log` (
   `oper_ip` varchar(50) DEFAULT '' COMMENT '主机地址',
   `oper_location` varchar(255) DEFAULT '' COMMENT '操作地点',
   `oper_param` varchar(2000) DEFAULT '' COMMENT '请求参数',
+  `json_result` varchar(2000) DEFAULT '' COMMENT '返回参数',
   `status` int(1) DEFAULT '0' COMMENT '操作状态（0正常 1异常）',
   `error_msg` varchar(2000) DEFAULT '' COMMENT '错误消息',
   `oper_time` datetime DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`oper_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='操作日志记录';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8 COMMENT='操作日志记录';
 
 -- ----------------------------
 -- Records of sys_oper_log
