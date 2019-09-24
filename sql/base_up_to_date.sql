@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2019-09-02 16:59:04
+Date: 2019-09-24 13:47:26
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -239,7 +239,7 @@ CREATE TABLE `qrtz_scheduler_state` (
 -- ----------------------------
 -- Records of qrtz_scheduler_state
 -- ----------------------------
-INSERT INTO `qrtz_scheduler_state` VALUES ('RuoyiScheduler', 'LAPTOP-CL0A1HLL1567411375187', '1567414604524', '15000');
+INSERT INTO `qrtz_scheduler_state` VALUES ('RuoyiScheduler', 'LAPTOP-CL0A1HLL1569303802439', '1569304046844', '15000');
 
 -- ----------------------------
 -- Table structure for `qrtz_simple_triggers`
@@ -733,6 +733,10 @@ CREATE TABLE `sys_job_log` (
 ) ENGINE=InnoDB AUTO_INCREMENT=94 DEFAULT CHARSET=utf8 COMMENT='定时任务调度日志表';
 
 -- ----------------------------
+-- Records of sys_job_log
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for `sys_line`
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_line`;
@@ -780,6 +784,10 @@ CREATE TABLE `sys_logininfor` (
   `login_time` datetime DEFAULT NULL COMMENT '访问时间',
   PRIMARY KEY (`info_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8 COMMENT='系统访问记录';
+
+-- ----------------------------
+-- Records of sys_logininfor
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `sys_menu`
@@ -917,6 +925,9 @@ CREATE TABLE `sys_message` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='同步消息表';
 
+-- ----------------------------
+-- Records of sys_message
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `sys_notice`
@@ -963,6 +974,10 @@ CREATE TABLE `sys_oper_log` (
   `oper_time` datetime DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`oper_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='操作日志记录';
+
+-- ----------------------------
+-- Records of sys_oper_log
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `sys_post`

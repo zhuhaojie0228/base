@@ -2,6 +2,8 @@ package com.tnkj.common.utils.file;
 
 import java.io.File;
 import java.io.IOException;
+
+import com.tnkj.common.constant.Constants;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
 import com.tnkj.common.exception.file.FileNameLengthLimitExceededException;
@@ -147,7 +149,7 @@ public class FileUploadUtils
     {
         int dirLastIndex = uploadDir.lastIndexOf("/") + 1;
         String currentDir = StringUtils.substring(uploadDir, dirLastIndex);
-        String pathFileName = "/profile/" + currentDir + "/" + fileName;
+        String pathFileName = Constants.RESOURCE_PREFIX + "/" + currentDir + "/" + fileName;
         return pathFileName;
     }
 

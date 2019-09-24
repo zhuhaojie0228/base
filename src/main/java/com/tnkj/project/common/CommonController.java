@@ -2,6 +2,8 @@ package com.tnkj.project.common;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.tnkj.common.constant.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,5 +89,25 @@ public class CommonController
         {
             return AjaxResult.error(e.getMessage());
         }
+    }
+
+    /**
+     * 本地资源通用下载
+     */
+    @GetMapping("/common/download/resource")
+    public void resourceDownload(String resource, HttpServletRequest request, HttpServletResponse response)
+            throws Exception
+    {
+        // 本地资源路径
+        String localPath = RuoYiConfig.getProfile();
+        // 数据库资源地址
+        String downloadPath = localPath + StringUtils.substringAfter(resource, Constants.RESOURCE_PREFIX);
+        // 下载名称
+        String downloadName = StringUtils.substringAfterLast(downloadPath, "/");
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("multipart/form-data");
+        response.setHeader("Content-Disposition",
+                "attachment;fileName=" + FileUtils.setFileDownloadHeader(request, downloadName));
+        FileUtils.writeBytes(downloadPath, response.getOutputStream());
     }
 }

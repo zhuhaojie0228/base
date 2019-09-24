@@ -73,7 +73,7 @@ spring:
 # MyBatis
 mybatis:
     # 搜索指定包别名
-    typeAliasesPackage: com.tnkj.project
+    typeAliasesPackage: com.ruoyi.project.**.domain
     # 配置mapper的扫描，找到所有的mapper.xml映射文件
     mapperLocations: classpath:mybatis/**/*Mapper.xml
     # 加载全局的配置文件
@@ -109,7 +109,7 @@ shiro:
     # 设置Cookie的过期时间，天为单位
     maxAge: 30
   session:
-    # Session超时时间（默认30分钟）
+    # Session超时时间，-1代表永不过期（默认30分钟）
     expireTime: 300
     # 同步session到数据库的周期（默认1分钟）
     dbSyncPeriod: 1
@@ -137,5 +137,5 @@ gen:
   packageName: com.tnkj.project.oa
   # 自动去除表前缀，默认是true
   autoRemovePre: true
-  # 表前缀(类名不会包含表前缀)
+  # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
   tablePrefix: oa_
