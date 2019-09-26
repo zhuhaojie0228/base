@@ -3,6 +3,10 @@ package com.tnkj.project.system.dept.controller;
 import java.util.List;
 
 import com.tnkj.framework.web.domain.DeptZtree;
+import com.tnkj.project.system.line.domain.Line;
+import com.tnkj.project.system.line.service.ILineService;
+import com.tnkj.project.system.station.domain.Station;
+import com.tnkj.project.system.station.service.IStationService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,6 +41,12 @@ public class DeptController extends BaseController
 
     @Autowired
     private IDeptService deptService;
+
+    @Autowired
+    private ILineService lineService;
+
+    @Autowired
+    private IStationService stationService;
 
     @RequiresPermissions("system:dept:view")
     @GetMapping()
@@ -113,6 +123,20 @@ public class DeptController extends BaseController
             }else if(deptService.checkDeptExistUser(dept.getId())) {
                 return AjaxResult.warn("机构存在用户,不允许停用");
             }
+            //校验部门下是否存在线路
+            Line line=new Line();
+            line.setDeptId(dept.getId());
+            List<Line> lineList=lineService.selectLineList(line);
+            if(lineList!=null && !lineList.isEmpty()){
+                return AjaxResult.warn("机构存在线路,不允许删除");
+            }
+            //校验部门下是否存在车站
+            Station station=new Station();
+            station.setDeptId(dept.getId());
+            List<Station> stationList=stationService.selectStationList(station);
+            if(stationList!=null && !stationList.isEmpty()){
+                return AjaxResult.warn("机构存在车站,不允许删除");
+            }
         }
         return toAjax(deptService.updateDept(dept));
     }
@@ -134,6 +158,21 @@ public class DeptController extends BaseController
         {
             return AjaxResult.warn("机构存在用户,不允许删除");
         }
+        //校验部门下是否存在线路
+        Line line=new Line();
+        line.setDeptId(id);
+        List<Line> lineList=lineService.selectLineList(line);
+        if(lineList!=null && !lineList.isEmpty()){
+            return AjaxResult.warn("机构存在线路,不允许删除");
+        }
+        //校验部门下是否存在车站
+        Station station=new Station();
+        station.setDeptId(id);
+        List<Station> stationList=stationService.selectStationList(station);
+        if(stationList!=null && !stationList.isEmpty()){
+            return AjaxResult.warn("机构存在车站,不允许删除");
+        }
+
         return toAjax(deptService.deleteDeptById(id));
     }
 

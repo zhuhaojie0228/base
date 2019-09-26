@@ -1,5 +1,6 @@
 package com.tnkj.project.system.line.service;
 
+import com.tnkj.framework.web.domain.DeptZtree;
 import com.tnkj.project.system.line.domain.Line;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import java.util.List;
  * 线路Service接口
  * 
  * @author tnkj
- * @date 2019-08-19
+ * @date 2019-09-25
  */
 public interface ILineService 
 {
@@ -58,4 +59,12 @@ public interface ILineService
      * @return 结果
      */
     public int deleteLineById(String id);
+
+    /**
+     * 查询线路管理树
+     *
+     * @param line 线路信息
+     * @return 所有线路信息
+     */
+    public List<DeptZtree> selectLineTree(Line line);
 }

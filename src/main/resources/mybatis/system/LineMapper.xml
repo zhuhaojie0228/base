@@ -9,13 +9,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="number"    column="number"    />
         <result property="name"    column="name"    />
         <result property="shortName"    column="short_name"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptName"    column="dept_name"    />
         <result property="level"    column="level"    />
         <result property="lineNumber"    column="line_number"    />
-        <result property="classid"    column="classid"    />
-        <result property="flag"    column="flag"    />
-        <result property="orgid"    column="orgid"    />
-        <result property="serverFlag"    column="server_flag"    />
-        <result property="mId"    column="m_id"    />
+        <result property="classId"    column="class_id"    />
         <result property="sort"    column="sort"    />
         <result property="delFlag"    column="del_flag"    />
         <result property="remark"    column="remark"    />
@@ -26,28 +24,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectLineVo">
-        select id, number, name, short_name, level, line_number, classid, flag, orgid, server_flag, m_id, sort, del_flag, remark, create_by, create_time, update_by, update_time from sys_line
+        select l.id, l.number, l.name, l.short_name, l.dept_id, d.name as dept_name, l.level, l.line_number, l.class_id, l.sort, l.del_flag, l.remark, l.create_by, l.create_time, l.update_by, l.update_time
+        from sys_line l left join sys_dept d on l.dept_id = d.id
     </sql>
 
     <select id="selectLineList" parameterType="Line" resultMap="LineResult">
         <include refid="selectLineVo"/>
-        where del_flag = '0'
-        <if test="number != null  and number != ''"> and number = #{number}</if>
-        <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-        <if test="shortName != null  and shortName != ''"> and short_name like concat('%', #{shortName}, '%')</if>
-        <if test="level != null  and level != ''"> and level = #{level}</if>
-        <if test="lineNumber != null  and lineNumber != ''"> and line_number = #{lineNumber}</if>
-        <if test="classid != null  and classid != ''"> and classid = #{classid}</if>
-        <if test="flag != null  and flag != ''"> and flag = #{flag}</if>
-        <if test="orgid != null  and orgid != ''"> and orgid = #{orgid}</if>
-        <if test="serverFlag != null  and serverFlag != ''"> and server_flag = #{serverFlag}</if>
-        <if test="mId != null  and mId != ''"> and m_id = #{mId}</if>
-        <if test="sort != null "> and sort = #{sort}</if>
+        <where>  
+            <if test="number != null  and number != ''"> and l.number = #{number}</if>
+            <if test="name != null  and name != ''"> and l.name like concat('%', #{name}, '%')</if>
+            <if test="shortName != null  and shortName != ''"> and l.short_name like concat('%', #{shortName}, '%')</if>
+            <if test="deptId != null  and deptId != ''"> and l.dept_id = #{deptId}</if>
+            <if test="level != null  and level != ''"> and l.level = #{level}</if>
+            <if test="lineNumber != null  and lineNumber != ''"> and l.line_number = #{lineNumber}</if>
+            <if test="classId != null  and classId != ''"> and l.class_id = #{classId}</if>
+            <if test="sort != null "> and l.sort = #{sort}</if>
+        </where>
+        order by CAST(d.level AS UNSIGNED),d.sort,l.sort
     </select>
     
     <select id="selectLineById" parameterType="String" resultMap="LineResult">
         <include refid="selectLineVo"/>
-        where id = #{id}
+        where l.id = #{id}
     </select>
         
     <insert id="insertLine" parameterType="Line">
@@ -57,13 +55,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="number != null  and number != ''">number,</if>
             <if test="name != null  and name != ''">name,</if>
             <if test="shortName != null  and shortName != ''">short_name,</if>
+            <if test="deptId != null  and deptId != ''">dept_id,</if>
             <if test="level != null  and level != ''">level,</if>
             <if test="lineNumber != null  and lineNumber != ''">line_number,</if>
-            <if test="classid != null  and classid != ''">classid,</if>
-            <if test="flag != null  and flag != ''">flag,</if>
-            <if test="orgid != null  and orgid != ''">orgid,</if>
-            <if test="serverFlag != null  and serverFlag != ''">server_flag,</if>
-            <if test="mId != null  and mId != ''">m_id,</if>
+            <if test="classId != null  and classId != ''">class_id,</if>
             <if test="sort != null ">sort,</if>
             <if test="delFlag != null  and delFlag != ''">del_flag,</if>
             <if test="remark != null  and remark != ''">remark,</if>
@@ -77,13 +72,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="number != null  and number != ''">#{number},</if>
             <if test="name != null  and name != ''">#{name},</if>
             <if test="shortName != null  and shortName != ''">#{shortName},</if>
+            <if test="deptId != null  and deptId != ''">#{deptId},</if>
             <if test="level != null  and level != ''">#{level},</if>
             <if test="lineNumber != null  and lineNumber != ''">#{lineNumber},</if>
-            <if test="classid != null  and classid != ''">#{classid},</if>
-            <if test="flag != null  and flag != ''">#{flag},</if>
-            <if test="orgid != null  and orgid != ''">#{orgid},</if>
-            <if test="serverFlag != null  and serverFlag != ''">#{serverFlag},</if>
-            <if test="mId != null  and mId != ''">#{mId},</if>
+            <if test="classId != null  and classId != ''">#{classId},</if>
             <if test="sort != null ">#{sort},</if>
             <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
@@ -100,13 +92,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="number != null  and number != ''">number = #{number},</if>
             <if test="name != null  and name != ''">name = #{name},</if>
             <if test="shortName != null  and shortName != ''">short_name = #{shortName},</if>
+            <if test="deptId != null  and deptId != ''">dept_id = #{deptId},</if>
             <if test="level != null  and level != ''">level = #{level},</if>
             <if test="lineNumber != null  and lineNumber != ''">line_number = #{lineNumber},</if>
-            <if test="classid != null  and classid != ''">classid = #{classid},</if>
-            <if test="flag != null  and flag != ''">flag = #{flag},</if>
-            <if test="orgid != null  and orgid != ''">orgid = #{orgid},</if>
-            <if test="serverFlag != null  and serverFlag != ''">server_flag = #{serverFlag},</if>
-            <if test="mId != null  and mId != ''">m_id = #{mId},</if>
+            <if test="classId != null  and classId != ''">class_id = #{classId},</if>
             <if test="sort != null ">sort = #{sort},</if>
             <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
@@ -119,12 +108,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteLineById" parameterType="String">
-        update sys_line set del_flag = '2' where id = #{deptId}
+        delete from sys_line where id = #{id}
     </delete>
 
     <delete id="deleteLineByIds" parameterType="String">
-        update sys_line set del_flag = '2' where id in
-        <foreach collection="array" item="id" open="(" separator="," close=")">
+        delete from sys_line where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>

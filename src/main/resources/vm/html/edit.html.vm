@@ -103,6 +103,7 @@
 #end
 #end
 #end
+#end
         </form>
     </div>
     <th:block th:include="include :: footer" />
@@ -110,7 +111,6 @@
 #if($column.edit && !$column.superColumn && !$column.pk && $column.htmlType == "datetime")
     <th:block th:include="include :: datetimepicker-js" />
 #break
-#end
 #end
 #end
     <script type="text/javascript">

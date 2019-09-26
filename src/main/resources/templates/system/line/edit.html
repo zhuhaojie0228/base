@@ -8,12 +8,13 @@
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-line-edit" th:object="${line}">
             <input name="id" th:field="*{id}" type="hidden">
+            <input name="deptId" type="hidden" id="treeId"/>
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><span style="color: red; ">*</span>线路代码：</label>
                         <div class="col-sm-8">
-                            <input name="number" th:field="*{number}" class="form-control" type="text" maxlength="30" required>
+                            <input name="number" th:field="*{number}" class="form-control" type="text" maxlength="50" required>
                         </div>
                     </div>
                 </div>
@@ -21,7 +22,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><span style="color: red; ">*</span>线路名称：</label>
                         <div class="col-sm-8">
-                            <input  name="name" th:field="*{name}" class="form-control" type="text" maxlength="30" required>
+                            <input  name="name" th:field="*{name}" class="form-control" type="text" maxlength="50" required>
                         </div>
                     </div>
                 </div>
@@ -29,44 +30,20 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>简称：</label>
+                        <label class="col-sm-4 control-label">简称：</label>
                         <div class="col-sm-8">
-                            <input name="shortName" th:field="*{shortName}" class="form-control" type="text" maxlength="30" required>
+                            <input name="shortName" th:field="*{shortName}" class="form-control" type="text" maxlength="50">
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>线路等级：</label>
+                        <label class="col-sm-4 control-label">归属部门：</label>
                         <div class="col-sm-8">
-                            <select name="classid" class="form-control m-b" th:with="type=${@dict.getType('sys_line_classid')}" th:field="*{classid}" required>
-                                <option value=""></option>
-                                <option th:each="dict:${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>线路类型：</label>
-                        <div class="col-sm-8">
-                            <select name="lineNumber" class="form-control m-b" th:with="type=${@dict.getType('sys_line_number')}" th:field="*{lineNumber}" required>
-                                <option value=""></option>
-                                <option th:each="dict:${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>线路级别：</label>
-                        <div class="col-sm-8">
-                            <select name="level" class="form-control m-b" th:with="type=${@dict.getType('sys_line_level')}" th:field="*{level}" required>
-                                <option value=""></option>
-                                <option th:each="dict:${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                            </select>
+                            <div class="input-group">
+                                <input onclick="selectDeptTree()" id="treeName" type="text" name="deptName" placeholder="请选择归属部门" class="form-control" th:field="*{deptName}">
+                                <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -76,7 +53,42 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><span style="color: red; ">*</span>排序号：</label>
                         <div class="col-sm-8">
-                            <input name="sort" class="form-control" type="text" maxlength="30" th:field="*{sort}" required>
+                            <input name="sort" class="form-control" type="text" maxlength="5" th:field="*{sort}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">线路级别：</label>
+                        <div class="col-sm-8">
+                            <select name="level" class="form-control m-b" th:with="type=${@dict.getType('sys_line_level')}" th:field="*{level}">
+                                <option value=""></option>
+                                <option th:each="dict:${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">线路类型：</label>
+                        <div class="col-sm-8">
+                            <select name="lineNumber" class="form-control m-b" th:with="type=${@dict.getType('sys_line_number')}" th:field="*{lineNumber}">
+                                <option value=""></option>
+                                <option th:each="dict:${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">线路等级：</label>
+                        <div class="col-sm-8">
+                            <select name="classId" class="form-control m-b" th:with="type=${@dict.getType('sys_line_classid')}" th:field="*{classId}">
+                                <option value=""></option>
+                                <option th:each="dict:${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -84,9 +96,9 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label"><span style="color: red; ">*</span>线路描述：</label>
+                        <label class="col-sm-2 control-label">线路描述：</label>
                         <div class="col-sm-10">
-                            <textarea name="remark" class="form-control" required>[[*{remark}]]</textarea>
+                            <textarea name="remark" class="form-control" maxlength="500">[[*{remark}]]</textarea>
                         </div>
                     </div>
                 </div>
@@ -103,7 +115,35 @@
 
         function submitHandler() {
             if ($.validate.form()) {
+                if($.common.isNotNum($("#sort").val())){
+                    $.modal.alertWarning("您好,排序号只允许输入大于0的整数,请检查!");
+                    return;
+                }
                 $.operate.save(prefix + "/edit", $('#form-line-edit').serialize());
+            }
+        }
+
+        /*线路管理-修改-选择部门树*/
+        function selectDeptTree() {
+            var treeId = $("#treeId").val();
+            var deptId = $.common.isEmpty(treeId) ? "1" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if ($.tree.notAllowParents(tree)) {
+                var body = layer.getChildFrame('body', index);
+                $("#treeId").val(body.find('#treeId').val());
+                $("#treeName").val(body.find('#treeName').val());
+                layer.close(index);
             }
         }
     </script>

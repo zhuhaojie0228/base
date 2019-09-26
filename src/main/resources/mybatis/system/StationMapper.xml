@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tnkj.project.system.station.mapper.StationMapper">
+    
+    <resultMap type="Station" id="StationResult">
+        <result property="id"    column="id"    />
+        <result property="stationNumber"    column="station_number"    />
+        <result property="name"    column="name"    />
+        <result property="shortName"    column="short_name"    />
+        <result property="lineId"    column="line_id"    />
+        <result property="lineName"    column="line_name"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="type"    column="type"    />
+        <result property="stationClass"    column="station_class"    />
+        <result property="flag"    column="flag"    />
+        <result property="upMark"    column="up_mark"    />
+        <result property="downMark"    column="down_mark"    />
+        <result property="phone"    column="phone"    />
+        <result property="build"    column="build"    />
+        <result property="repairH"    column="repair_h"    />
+        <result property="repairM"    column="repair_m"    />
+        <result property="sort"    column="sort"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectStationVo">
+        select s.id, s.station_number, s.name, s.short_name, s.line_id, l.name as line_name, s.dept_id, d.name as dept_name, s.type, s.station_class, s.flag, s.up_mark, s.down_mark, s.phone, s.build, s.repair_h, s.repair_m, s.sort, s.del_flag, s.remark, s.create_by, s.create_time, s.update_by, s.update_time
+        from sys_station s left join sys_dept d on s.dept_id = d.id
+        left join sys_line l on s.line_id = l.id
+    </sql>
+
+    <select id="selectStationList" parameterType="Station" resultMap="StationResult">
+        <include refid="selectStationVo"/>
+        <where>  
+            <if test="stationNumber != null  and stationNumber != ''"> and s.station_number = #{stationNumber}</if>
+            <if test="name != null  and name != ''"> and s.name like concat('%', #{name}, '%')</if>
+            <if test="shortName != null  and shortName != ''"> and s.short_name like concat('%', #{shortName}, '%')</if>
+            <if test="lineId != null  and lineId != ''"> and s.line_id = #{lineId}</if>
+            <if test="deptId != null  and deptId != ''"> and s.dept_id = #{deptId}</if>
+            <if test="type != null "> and s.type = #{type}</if>
+            <if test="stationClass != null  and stationClass != ''"> and s.station_class = #{stationClass}</if>
+            <if test="flag != null "> and s.flag = #{flag}</if>
+            <if test="upMark != null "> and s.up_mark = #{upMark}</if>
+            <if test="downMark != null "> and s.down_mark = #{downMark}</if>
+            <if test="phone != null  and phone != ''"> and s.phone = #{phone}</if>
+            <if test="build != null  and build != ''"> and s.build = #{build}</if>
+            <if test="repairH != null and repairH != ''"> and s.repair_h = #{repairH}</if>
+            <if test="repairM != null and repairM != ''"> and s.repair_m = #{repairM}</if>
+            <if test="sort != null "> and s.sort = #{sort}</if>
+        </where>
+        order by CAST(d.level AS UNSIGNED),d.sort,l.sort,s.sort
+    </select>
+    
+    <select id="selectStationById" parameterType="String" resultMap="StationResult">
+        <include refid="selectStationVo"/>
+        where s.id = #{id}
+    </select>
+        
+    <insert id="insertStation" parameterType="Station">
+        insert into sys_station
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="stationNumber != null  and stationNumber != ''">station_number,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="shortName != null  and shortName != ''">short_name,</if>
+            <if test="lineId != null  and lineId != ''">line_id,</if>
+            <if test="deptId != null  and deptId != ''">dept_id,</if>
+            <if test="type != null ">type,</if>
+            <if test="stationClass != null  and stationClass != ''">station_class,</if>
+            <if test="flag != null ">flag,</if>
+            <if test="upMark != null ">up_mark,</if>
+            <if test="downMark != null ">down_mark,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+            <if test="build != null and build != ''">build,</if>
+            <if test="repairH != null and repairH != ''">repair_h,</if>
+            <if test="repairM != null and repairM != ''">repair_m,</if>
+            <if test="sort != null ">sort,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="stationNumber != null  and stationNumber != ''">#{stationNumber},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="shortName != null  and shortName != ''">#{shortName},</if>
+            <if test="lineId != null  and lineId != ''">#{lineId},</if>
+            <if test="deptId != null  and deptId != ''">#{deptId},</if>
+            <if test="type != null ">#{type},</if>
+            <if test="stationClass != null  and stationClass != ''">#{stationClass},</if>
+            <if test="flag != null ">#{flag},</if>
+            <if test="upMark != null ">#{upMark},</if>
+            <if test="downMark != null ">#{downMark},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+            <if test="build != null and build != ''">#{build},</if>
+            <if test="repairH != null and repairH != ''">#{repairH},</if>
+            <if test="repairM != null and repairM != ''">#{repairM},</if>
+            <if test="sort != null ">#{sort},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStation" parameterType="Station">
+        update sys_station
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stationNumber != null  and stationNumber != ''">station_number = #{stationNumber},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="shortName != null  and shortName != ''">short_name = #{shortName},</if>
+            <if test="lineId != null  and lineId != ''">line_id = #{lineId},</if>
+            <if test="deptId != null  and deptId != ''">dept_id = #{deptId},</if>
+            <if test="type != null ">type = #{type},</if>
+            <if test="stationClass != null  and stationClass != ''">station_class = #{stationClass},</if>
+            <if test="flag != null ">flag = #{flag},</if>
+            <if test="upMark != null ">up_mark = #{upMark},</if>
+            <if test="downMark != null ">down_mark = #{downMark},</if>
+            <if test="phone != null  and phone != ''">phone = #{phone},</if>
+            <if test="build != null and build != ''">build = #{build},</if>
+            <if test="repairH != null and repairH != ''">repair_h = #{repairH},</if>
+            <if test="repairM != null and repairM != ''">repair_m = #{repairM},</if>
+            <if test="sort != null ">sort = #{sort},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStationById" parameterType="String">
+        delete from sys_station where id = #{id}
+    </delete>
+
+    <delete id="deleteStationByIds" parameterType="String">
+        delete from sys_station where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

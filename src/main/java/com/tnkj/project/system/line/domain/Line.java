@@ -9,7 +9,7 @@ import com.tnkj.framework.web.domain.BaseEntity;
  * 线路对象 sys_line
  * 
  * @author tnkj
- * @date 2019-08-19
+ * @date 2019-09-25
  */
 public class Line extends BaseEntity
 {
@@ -30,39 +30,30 @@ public class Line extends BaseEntity
     @Excel(name = "线路名称", readConverterExp = "缩=写")
     private String shortName;
 
+    /** 归属部门ID */
+    private String deptId;
+
+    /** 归属部门 */
+    @Excel(name = "归属部门")
+    private String deptName;
+
     /** 线路级别0：主线（被分段），1：主线，2：支线，3：区段 */
-    @Excel(name = "线路级别0：主线", readConverterExp = "被=分段")
+    @Excel(name = "线路级别",readConverterExp = "0=主线(被分段),1=主线,2=支线,3=区段")
     private String level;
 
     /** 线路类型：单线，复线，三线，四线 */
-    @Excel(name = "线路类型：单线，复线，三线，四线")
+    @Excel(name = "线路类型",readConverterExp = "1=单线,2=复线,3=三线,4=四线")
     private String lineNumber;
 
     /** 线路等级：例如客运专线，繁忙干线,干线,其他等 */
-    @Excel(name = "线路等级：例如客运专线，繁忙干线,干线,其他等")
-    private String classid;
-
-    /** 部(1)/局(2)线别名称标志 */
-    @Excel(name = "部(1)/局(2)线别名称标志")
-    private String flag;
-
-    /** 标识该线路所属局的ID */
-    @Excel(name = "标识该线路所属局的ID")
-    private String orgid;
-
-    /** 标识数据的服务器来源 */
-    @Excel(name = "标识数据的服务器来源")
-    private String serverFlag;
-
-    /** 主表ID */
-    @Excel(name = "主表ID")
-    private String mId;
+    @Excel(name = "线路等级",readConverterExp = "1=客运专线,2=繁忙干线,3=干线,4=其他")
+    private String classId;
 
     /** 排序号 */
     @Excel(name = "排序号")
-    private Integer sort;
+    private Long sort;
 
-    /** 删除标记（＊表示为本局线路） */
+    /** 删除标记 */
     private String delFlag;
 
     public void setId(String id) 
@@ -101,6 +92,15 @@ public class Line extends BaseEntity
     {
         return shortName;
     }
+    public void setDeptId(String deptId) 
+    {
+        this.deptId = deptId;
+    }
+
+    public String getDeptId() 
+    {
+        return deptId;
+    }
     public void setLevel(String level) 
     {
         this.level = level;
@@ -119,57 +119,21 @@ public class Line extends BaseEntity
     {
         return lineNumber;
     }
-    public void setClassid(String classid) 
+    public void setClassId(String classId) 
     {
-        this.classid = classid;
+        this.classId = classId;
     }
 
-    public String getClassid() 
+    public String getClassId() 
     {
-        return classid;
+        return classId;
     }
-    public void setFlag(String flag) 
-    {
-        this.flag = flag;
-    }
-
-    public String getFlag() 
-    {
-        return flag;
-    }
-    public void setOrgid(String orgid) 
-    {
-        this.orgid = orgid;
-    }
-
-    public String getOrgid() 
-    {
-        return orgid;
-    }
-    public void setServerFlag(String serverFlag) 
-    {
-        this.serverFlag = serverFlag;
-    }
-
-    public String getServerFlag() 
-    {
-        return serverFlag;
-    }
-    public void setMId(String mId) 
-    {
-        this.mId = mId;
-    }
-
-    public String getMId() 
-    {
-        return mId;
-    }
-    public void setSort(Integer sort) 
+    public void setSort(Long sort) 
     {
         this.sort = sort;
     }
 
-    public Integer getSort() 
+    public Long getSort() 
     {
         return sort;
     }
@@ -183,6 +147,14 @@ public class Line extends BaseEntity
         return delFlag;
     }
 
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -190,13 +162,11 @@ public class Line extends BaseEntity
             .append("number", getNumber())
             .append("name", getName())
             .append("shortName", getShortName())
+            .append("deptId", getDeptId())
+            .append("deptName", getDeptName())
             .append("level", getLevel())
             .append("lineNumber", getLineNumber())
-            .append("classid", getClassid())
-            .append("flag", getFlag())
-            .append("orgid", getOrgid())
-            .append("serverFlag", getServerFlag())
-            .append("mId", getMId())
+            .append("classId", getClassId())
             .append("sort", getSort())
             .append("delFlag", getDelFlag())
             .append("remark", getRemark())

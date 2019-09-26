@@ -96,6 +96,26 @@
                     onLoadSuccess: $.table.onLoadSuccess,               // 当所有数据被加载时触发处理函数
                     exportOptions: options.exportOptions,               // 前端导出忽略列索引
                     detailFormatter: options.detailFormatter,           // 在行下面展示其他数据列表
+					onEditableSave: function (field, row, oldValue, $el) {
+						$.ajax({
+							type: "post",
+							url: options.editUrl,
+							data: row,
+							dataType: 'JSON',
+							success: function (data, status) {
+								if (status == "success") {
+									$.table.search();
+									//$.modal.alertSuccess('提交数据成功')
+								}
+							},
+							error: function () {
+								$.modal.alertError('编辑失败');
+							},
+							complete: function () {
+
+							}
+						});
+					}
                 });
             },
             // 查询条件
@@ -715,6 +735,36 @@
                     }
                 });
             },
+			// 弹出层指定参数选项,新增表格当前行数据薪资
+			openRowOptions: function (options) {
+				var _url = $.common.isEmpty(options.url) ? "/404.html" : options.url;
+				var _title = $.common.isEmpty(options.title) ? "系统窗口" : options.title;
+				var _width = $.common.isEmpty(options.width) ? "800" : options.width;
+				var _height = $.common.isEmpty(options.height) ? ($(window).height() - 50) : options.height;
+				var _data = $.common.isEmpty(options.data) ? "" : options.data;
+				var _btn = ['<i class="fa fa-check"></i> 确认', '<i class="fa fa-close"></i> 关闭'];
+				if ($.common.isEmpty(options.yes)) {
+					options.yes = function(index, layero) {
+						options.callBack(index, layero, _data);
+					}
+				}
+				layer.open({
+					type: 2,
+					maxmin: true,
+					shade: 0.3,
+					title: _title,
+					fix: false,
+					area: [_width + 'px', _height + 'px'],
+					content: _url,
+					shadeClose: $.common.isEmpty(options.shadeClose) ? true : options.shadeClose,
+					skin: options.skin,
+					btn: $.common.isEmpty(options.btn) ? _btn : options.btn,
+					yes: options.yes,
+					cancel: function () {
+						return true;
+					}
+				});
+			},
             // 弹出层全屏
             openFull: function (title, url, width, height) {
             	//如果是移动端，就使用自适应大小弹窗
