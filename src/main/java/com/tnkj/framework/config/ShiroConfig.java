@@ -169,6 +169,15 @@ public class ShiroConfig
         return sessionFactory;
     }
 
+    @Bean(name = "sessionIdCookie")
+    public SimpleCookie sessionIdCookie() {
+        SimpleCookie cookie = new SimpleCookie();
+        cookie.setName("BASE");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(18000);
+        return cookie;
+    }
+
     /**
      * 会话管理器
      */
@@ -192,6 +201,7 @@ public class ShiroConfig
         manager.setSessionDAO(sessionDAO());
         // 自定义sessionFactory
         manager.setSessionFactory(sessionFactory());
+        manager.setSessionIdCookie(sessionIdCookie());
         return manager;
     }
 
