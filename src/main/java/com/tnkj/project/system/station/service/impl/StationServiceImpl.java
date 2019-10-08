@@ -51,6 +51,18 @@ public class StationServiceImpl implements IStationService
     }
 
     /**
+     * 机构车站管理页面查询车站管理列表
+     *
+     * @param station 车站管理
+     * @return 车站管理
+     */
+    @Override
+    public List<Station> selectStaByRel(Station station)
+    {
+        return stationMapper.selectStaByRel(station);
+    }
+
+    /**
      * 新增车站管理
      * 
      * @param station 车站管理

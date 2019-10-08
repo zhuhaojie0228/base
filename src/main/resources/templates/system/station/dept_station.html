@@ -20,6 +20,13 @@
                                     <p>线路名称：</p>
                                     <input type="text" name="lineName" id="lineName"  onclick="searchLineTree()"/>
                                 </li>
+                                <li>
+                                    <p>关联状态：</p>
+                                    <select name="isRelated" id="isRelated">
+                                        <option value="">全部</option>
+                                        <option value="1">未关联</option>
+                                    </select>
+                                </li>
                                 <li style="display:none;">
                                     <p>机构名称：</p>
                                     <input type="text" name="deptId" id="deptId"/>
@@ -66,9 +73,19 @@
             stationRefresh();
         })
 
+        $("#isRelated").change(function(){
+            var param={};
+            if($.common.isNotEmpty($("#lineId").val())){
+                param.lineId=$("#lineId").val();
+            }
+            stationRefresh(param);
+        })
+
         function stationRefresh(param){
             if($.common.isEmpty(param)){
-                param={};
+                param={"isRelated":$("#isRelated").val()};
+            }else{
+                param.isRelated=$("#isRelated").val();
             }
             $("#lineStation").html('');
             var dataList;

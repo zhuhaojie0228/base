@@ -77,7 +77,7 @@ public class StationController extends BaseController
                 station.setDeptId(null);
             }
         }*/
-        return stationService.selectStationList(station);
+        return stationService.selectStaByRel(station);
     }
 
 

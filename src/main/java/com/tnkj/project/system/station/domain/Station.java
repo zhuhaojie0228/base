@@ -39,6 +39,9 @@ public class Station extends BaseEntity
     @Excel(name = "归属线路")
     private String lineName;
 
+    /** 是否关联标志 */
+    private String isRelated;
+
     /** 种类:1是车站，2是驼峰，3是道口，4是区间 */
     @Excel(name = "种类")
     private Long type;
@@ -235,6 +238,14 @@ public class Station extends BaseEntity
         this.lineName = lineName;
     }
 
+    public String getIsRelated() {
+        return isRelated;
+    }
+
+    public void setIsRelated(String isRelated) {
+        this.isRelated = isRelated;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -244,6 +255,7 @@ public class Station extends BaseEntity
             .append("shortName", getShortName())
             .append("lineId", getLineId())
             .append("lineName", getLineName())
+            .append("isRelated", getIsRelated())
             .append("type", getType())
             .append("stationClass", getStationClass())
             .append("flag", getFlag())

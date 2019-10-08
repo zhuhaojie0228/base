@@ -11,6 +11,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="shortName"    column="short_name"    />
         <result property="lineId"    column="line_id"    />
         <result property="lineName"    column="line_name"    />
+        <result property="isRelated"    column="isRelated"    />
         <result property="type"    column="type"    />
         <result property="stationClass"    column="station_class"    />
         <result property="flag"    column="flag"    />
@@ -60,6 +61,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="repairH != null and repairH != ''"> and s.repair_h = #{repairH}</if>
             <if test="repairM != null and repairM != ''"> and s.repair_m = #{repairM}</if>
             <if test="sort != null "> and s.sort = #{sort}</if>
+        </where>
+        order by s.up_mark
+    </select>
+
+    <select id="selectStaByRel" parameterType="Station" resultMap="StationResult">
+        select s.id,s.name from sys_station s
+        left join sys_line l on s.line_id = l.id
+        <where>
+            <if test="lineId != null and lineId != ''"> and s.line_id = #{lineId}</if>
+            <if test="isRelated != null and isRelated != ''"> and s.id not in (select station_id from sys_dept_station)</if>
         </where>
         order by s.up_mark
     </select>

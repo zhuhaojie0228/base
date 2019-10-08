@@ -2932,7 +2932,6 @@
             }
         },
         _ajaxSubmit: function (fnBefore, fnSuccess, fnComplete, fnError, formdata, fileId, index, vUrl) {
-            debugger;
             var self = this, settings, defaults, data, processQueue;
             if (!self._raise('filepreajax', [formdata, fileId, index])) {
                 return;
@@ -4713,7 +4712,6 @@
             return self._getFileCount(len);
         },
         readFiles: function (files) {
-            debugger;
             this.reader = new FileReader();
             var self = this, $el = self.$element, reader = self.reader,
                 $container = self.$previewContainer, $status = self.$previewStatus, msgLoading = self.msgLoading,
@@ -5170,7 +5168,6 @@
             return self.$element;
         },
         upload: function () {
-            debugger;
             var self = this, fm = self.fileManager, totLen = fm.count(), i, outData, len,
                 hasExtraData = !$.isEmptyObject(self._getExtraData());
             if (!self.isAjaxUpload || self.isDisabled || !self._isFileSelectionValid(totLen)) {

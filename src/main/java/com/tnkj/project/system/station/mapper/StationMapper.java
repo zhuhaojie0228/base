@@ -29,6 +29,14 @@ public interface StationMapper
     public List<Station> selectStationList(Station station);
 
     /**
+     * 机构车站管理页面查询车站管理列表
+     *
+     * @param station 车站管理
+     * @return 车站管理集合
+     */
+    public List<Station> selectStaByRel(Station station);
+
+    /**
      * 新增车站管理
      * 
      * @param station 车站管理
