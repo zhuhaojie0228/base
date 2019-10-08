@@ -1,5 +1,6 @@
 package com.tnkj.project.system.station.mapper;
 
+import com.tnkj.project.system.station.domain.DeptStation;
 import com.tnkj.project.system.station.domain.Station;
 import java.util.List;
 
@@ -58,4 +59,41 @@ public interface StationMapper
      * @return 结果
      */
     public int deleteStationByIds(String[] ids);
+
+    /*
+     * 获取排序号
+     * */
+    public Long selectCurSort();
+
+    /**
+     * 根据机构I父级D查询车站管理列表
+     *
+     * @param parentId 机构父级ID
+     * @return 车站管理集合
+     */
+    public List<Station> selStationByDeptParId(String parentId);
+
+    /**
+     * 根据机构ID查询车站管理列表
+     *
+     * @param deptId 机构ID
+     * @return 车站管理集合
+     */
+    public List<Station> selectStationByDeptId(String deptId);
+
+    /**
+     * 根据deptId删除机构车站关联关系
+     *
+     * @param deptId 机构ID
+     * @return 结果
+     */
+    public int deleteRelByDeptId(String deptId);
+
+    /**
+     * 保存机构车站关联关系
+     *
+     * @param deptStation 机构车站关联关系
+     * @return 结果
+     */
+    public int saveDeptStation(DeptStation deptStation);
 }

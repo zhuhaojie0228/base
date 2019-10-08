@@ -58,4 +58,9 @@ public interface LineMapper
      * @return 结果
      */
     public int deleteLineByIds(String[] ids);
+
+    /*
+     * 获取排序号
+     * */
+    public Long selectCurSort();
 }

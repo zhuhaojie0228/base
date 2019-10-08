@@ -70,6 +70,36 @@ public class DeptServiceImpl implements IDeptService
     }
 
     /**
+     * 查询部门管理树：车间、工区
+     *
+     * @param dept 部门信息
+     * @return 所有部门信息
+     */
+    @Override
+    @DataScope(deptAlias = "d")
+    public List<DeptZtree> selectWorkDeptTree(Dept dept)
+    {
+        List<Dept> deptList = deptMapper.selectWorkDeptList(dept);
+        List<DeptZtree> ztrees = initZtree(deptList);
+        return ztrees;
+    }
+
+    /**
+     * 根据当前用户部门查询部门管理树：车间、工区
+     *
+     * @param dept 部门信息
+     * @return 所有部门信息
+     */
+    @Override
+    @DataScope(deptAlias = "d")
+    public List<DeptZtree> selectWorkByDept(Dept dept)
+    {
+        List<Dept> deptList = deptMapper.selectWorkByDept(dept);
+        List<DeptZtree> ztrees = initZtree(deptList);
+        return ztrees;
+    }
+
+    /**
      * 根据角色ID查询部门（数据权限）
      *
      * @param role 角色对象
@@ -193,6 +223,7 @@ public class DeptServiceImpl implements IDeptService
         }
         dept.setCreateBy(ShiroUtils.getLoginName());
         dept.setId(UUID.randomUUID().toString());
+        dept.setSort(deptMapper.selectCurSort());
         //dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
         int row=deptMapper.insertDept(dept);
         //新增同步消息信息

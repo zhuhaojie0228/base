@@ -36,6 +36,22 @@ public interface DeptMapper
     public List<Dept> selectDeptList(Dept dept);
 
     /**
+     * 查询部门管理数据：车间和工区
+     *
+     * @param dept 部门信息
+     * @return 部门信息集合
+     */
+    public List<Dept> selectWorkDeptList(Dept dept);
+
+    /**
+     * 根据当前用户部门查询部门管理数据：车间和工区
+     *
+     * @param dept 部门信息
+     * @return 部门信息集合
+     */
+    public List<Dept> selectWorkByDept(Dept dept);
+
+    /**
      * 删除部门管理信息
      * 
      * @param deptId 部门ID
@@ -106,4 +122,9 @@ public interface DeptMapper
      * @return 部门列表
      */
     public List<Dept> selectChildrenDeptById(String deptId);
+
+    /*
+     * 获取排序号
+     * */
+    public Long selectCurSort();
 }

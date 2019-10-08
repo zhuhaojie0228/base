@@ -62,6 +62,15 @@ public class LineController extends BaseController
     }
 
     /**
+     * 查询所有的线路数据
+     */
+    @PostMapping("/queryList")
+    @ResponseBody
+    public List<Line> queryList(Line line) {
+        return lineService.selectLineList(line);
+    }
+
+    /**
      * 导出线路列表
      */
     @RequiresPermissions("system:line:export")

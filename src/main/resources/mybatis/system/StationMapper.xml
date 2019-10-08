@@ -11,8 +11,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="shortName"    column="short_name"    />
         <result property="lineId"    column="line_id"    />
         <result property="lineName"    column="line_name"    />
-        <result property="deptId"    column="dept_id"    />
-        <result property="deptName"    column="dept_name"    />
         <result property="type"    column="type"    />
         <result property="stationClass"    column="station_class"    />
         <result property="flag"    column="flag"    />
@@ -31,9 +29,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+    <resultMap type="DeptStation" id="DeptStationResult">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="stationId"    column="station_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
     <sql id="selectStationVo">
-        select s.id, s.station_number, s.name, s.short_name, s.line_id, l.name as line_name, s.dept_id, d.name as dept_name, s.type, s.station_class, s.flag, s.up_mark, s.down_mark, s.phone, s.build, s.repair_h, s.repair_m, s.sort, s.del_flag, s.remark, s.create_by, s.create_time, s.update_by, s.update_time
-        from sys_station s left join sys_dept d on s.dept_id = d.id
+        select s.id, s.station_number, s.name, s.short_name, s.line_id, l.name as line_name, s.type, s.station_class, s.flag, s.up_mark, s.down_mark, s.phone, s.build, s.repair_h, s.repair_m, s.sort, s.del_flag, s.remark, s.create_by, s.create_time, s.update_by, s.update_time
+        from sys_station s
         left join sys_line l on s.line_id = l.id
     </sql>
 
@@ -44,7 +50,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null  and name != ''"> and s.name like concat('%', #{name}, '%')</if>
             <if test="shortName != null  and shortName != ''"> and s.short_name like concat('%', #{shortName}, '%')</if>
             <if test="lineId != null  and lineId != ''"> and s.line_id = #{lineId}</if>
-            <if test="deptId != null  and deptId != ''"> and s.dept_id = #{deptId}</if>
             <if test="type != null "> and s.type = #{type}</if>
             <if test="stationClass != null  and stationClass != ''"> and s.station_class = #{stationClass}</if>
             <if test="flag != null "> and s.flag = #{flag}</if>
@@ -56,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="repairM != null and repairM != ''"> and s.repair_m = #{repairM}</if>
             <if test="sort != null "> and s.sort = #{sort}</if>
         </where>
-        order by CAST(d.level AS UNSIGNED),d.sort,l.sort,s.sort
+        order by s.up_mark
     </select>
     
     <select id="selectStationById" parameterType="String" resultMap="StationResult">
@@ -72,7 +77,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null  and name != ''">name,</if>
             <if test="shortName != null  and shortName != ''">short_name,</if>
             <if test="lineId != null  and lineId != ''">line_id,</if>
-            <if test="deptId != null  and deptId != ''">dept_id,</if>
             <if test="type != null ">type,</if>
             <if test="stationClass != null  and stationClass != ''">station_class,</if>
             <if test="flag != null ">flag,</if>
@@ -96,7 +100,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null  and name != ''">#{name},</if>
             <if test="shortName != null  and shortName != ''">#{shortName},</if>
             <if test="lineId != null  and lineId != ''">#{lineId},</if>
-            <if test="deptId != null  and deptId != ''">#{deptId},</if>
             <if test="type != null ">#{type},</if>
             <if test="stationClass != null  and stationClass != ''">#{stationClass},</if>
             <if test="flag != null ">#{flag},</if>
@@ -123,7 +126,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null  and name != ''">name = #{name},</if>
             <if test="shortName != null  and shortName != ''">short_name = #{shortName},</if>
             <if test="lineId != null  and lineId != ''">line_id = #{lineId},</if>
-            <if test="deptId != null  and deptId != ''">dept_id = #{deptId},</if>
             <if test="type != null ">type = #{type},</if>
             <if test="stationClass != null  and stationClass != ''">station_class = #{stationClass},</if>
             <if test="flag != null ">flag = #{flag},</if>
@@ -154,5 +156,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectCurSort" resultType="Long">
+        select (max(sort)+1) as sort from sys_station
+    </select>
+
+    <select id="selectStationByDeptId" parameterType="String" resultMap="StationResult">
+        select s.id,s.name from sys_station s where s.id in
+        (select station_id from sys_dept_station where dept_id = #{id})
+        order by s.up_mark
+    </select>
+
+    <select id="selStationByDeptParId" parameterType="String" resultMap="StationResult">
+        select s.id,s.name from sys_station s where s.id in
+        (select ds.station_id from sys_dept_station ds
+         left join sys_dept d on ds.dept_id=d.id where d.parent_id=#{parentId})
+        order by s.up_mark
+    </select>
+
+    <delete id="deleteRelByDeptId" parameterType="String">
+        delete from sys_dept_station where dept_id = #{deptId}
+    </delete>
+
+    <insert id="saveDeptStation" parameterType="DeptStation">
+        insert into sys_dept_station
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptId != null  and deptId != ''">dept_id,</if>
+            <if test="stationId != null  and stationId != ''">station_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deptId != null  and deptId != ''">#{deptId},</if>
+            <if test="stationId != null  and stationId != ''">#{stationId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+        </trim>
+    </insert>
     
 </mapper>

@@ -75,6 +75,13 @@ public class UserController extends BaseController
         return getDataTable(list);
     }
 
+    @PostMapping("/queryList")
+    @ResponseBody
+    public List<User> queryList(User user) {
+        List<User> list = userService.selectUserList(user);
+        return list;
+    }
+
     @Log(title = "用户管理", businessType = BusinessType.EXPORT)
     @RequiresPermissions("system:user:export")
     @PostMapping("/export")

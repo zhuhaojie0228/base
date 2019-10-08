@@ -39,13 +39,6 @@ public class Station extends BaseEntity
     @Excel(name = "归属线路")
     private String lineName;
 
-    /** 归属部门ID */
-    private String deptId;
-
-    /** 归属部门 */
-    @Excel(name = "归属部门")
-    private String deptName;
-
     /** 种类:1是车站，2是驼峰，3是道口，4是区间 */
     @Excel(name = "种类")
     private Long type;
@@ -133,15 +126,6 @@ public class Station extends BaseEntity
     public String getLineId() 
     {
         return lineId;
-    }
-    public void setDeptId(String deptId) 
-    {
-        this.deptId = deptId;
-    }
-
-    public String getDeptId() 
-    {
-        return deptId;
     }
     public void setType(Long type) 
     {
@@ -243,14 +227,6 @@ public class Station extends BaseEntity
         return delFlag;
     }
 
-    public String getDeptName() {
-        return deptName;
-    }
-
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
-    }
-
     public String getLineName() {
         return lineName;
     }
@@ -268,8 +244,6 @@ public class Station extends BaseEntity
             .append("shortName", getShortName())
             .append("lineId", getLineId())
             .append("lineName", getLineName())
-            .append("deptId", getDeptId())
-            .append("deptName", getDeptName())
             .append("type", getType())
             .append("stationClass", getStationClass())
             .append("flag", getFlag())

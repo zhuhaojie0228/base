@@ -75,19 +75,13 @@
 		        },
 				{
 					field: 'level',
-					title: '机构类型',
+					title: '机构级别',
 					align: "left",
 					width: '10%',
 					formatter: function(value, item, index) {
 						return $.table.selectDictLabel(levelDatas,value);
 					}
 				},
-		        {
-		            field: 'sort',
-		            title: '排序',
-		            align: "left",
-					width: '10%'
-		        },
 		        {
 		            field: 'status',
 		            title: '状态',
@@ -110,7 +104,10 @@
 		            formatter: function(value, row, index) {
 		                if (row.parentId != 0) {
 		                    var actions = [];
-		                    actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+		                    if(row.level=='7' || row.level=='8' || row.level=='9'){
+								actions.push('<a><i class="fa fa-long-arrow-up" onclick="upOrDown(\'' + row.id +'\',\''+'up'+ '\')"></i></a>   <a onclick="upOrDown(\'' + row.id +'\',\''+'down'+ '\')"><i class="fa fa-long-arrow-down"></i></a> ');
+							}
+							actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
 		                    actions.push('<a class="btn btn-info  btn-xs ' + addFlag + '" href="javascript:void(0)" onclick="$.operate.add(\'' + row.id + '\')"><i class="fa fa-plus"></i>新增</a> ');
 		                    actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-trash"></i>删除</a>');
 		                    return actions.join('');
@@ -122,6 +119,27 @@
 		    };
 		    $.treeTable.init(options);
 		});
+
+		function upOrDown(id,upOrDwon){
+			var dataList;
+			var json = {};
+			json['id']=id;
+			json['upOrDwon']=upOrDwon;
+			$.ajax({
+				type: "post",
+				url: prefix+"/upOrDownRow",
+				async: false,
+				data: json,
+				dataType: 'JSON',
+			    success: function (result) {
+					if(result.code=='0'){
+						$.bttTable.bootstrapTreeTable('refresh');
+					}else{
+						$.modal.alertWarning(result.msg);
+					}
+				}
+			});
+		}
 	</script>
 </body>
 </html>

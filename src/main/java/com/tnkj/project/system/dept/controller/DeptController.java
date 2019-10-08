@@ -1,22 +1,22 @@
 package com.tnkj.project.system.dept.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+import com.tnkj.common.utils.security.ShiroUtils;
 import com.tnkj.framework.web.domain.DeptZtree;
 import com.tnkj.project.system.line.domain.Line;
 import com.tnkj.project.system.line.service.ILineService;
 import com.tnkj.project.system.station.domain.Station;
 import com.tnkj.project.system.station.service.IStationService;
+import com.tnkj.project.system.user.domain.User;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import com.tnkj.common.constant.UserConstants;
 import com.tnkj.common.utils.StringUtils;
 import com.tnkj.framework.aspectj.lang.annotation.Log;
@@ -59,6 +59,62 @@ public class DeptController extends BaseController
     @PostMapping("/list")
     @ResponseBody
     public List<Dept> list(Dept dept)
+    {
+        List<Dept> deptList = deptService.selectDeptList(dept);
+        return deptList;
+    }
+
+    @PostMapping("/upOrDownRow")
+    @ResponseBody
+    public AjaxResult upOrDownRow(String id,String upOrDwon) {
+        Dept dept=deptService.selectDeptById(id);
+        Dept temp=new Dept();
+        temp.setLevel(dept.getLevel());
+        temp.setParentId("1");
+        List<Dept> deptList=deptService.selectDeptList(temp);
+        Dept curDept=new Dept();
+        Dept tempDept=new Dept();
+        if("up".equals(upOrDwon)){
+            int rowNumber=0;
+            for(int i=0;i<deptList.size();i++){
+                if(id.equals(deptList.get(i).getId())){
+                    rowNumber=i;
+                    break;
+                }
+            }
+            if(rowNumber==0){
+                return AjaxResult.warn("当前部门已经是该级别第一条数据，无需上移");
+            }else{
+                curDept=deptList.get(rowNumber);
+                tempDept=deptList.get(rowNumber-1);
+            }
+        }else if("down".equals(upOrDwon)){
+            int rowNumber=0;
+            for(int i=0;i<deptList.size();i++){
+                if(id.equals(deptList.get(i).getId())){
+                    rowNumber=i;
+                    break;
+                }
+            }
+            if((rowNumber+1)==deptList.size()){
+                return AjaxResult.warn("当前部门已经是该级别最后一条数据，无需下移");
+            }else{
+                curDept=deptList.get(rowNumber);
+                tempDept=deptList.get(rowNumber+1);
+            }
+        }
+        Long curSort=curDept.getSort();
+        Long tempSort=tempDept.getSort();
+        curDept.setSort(tempSort);
+        tempDept.setSort(curSort);
+        deptService.updateDept(curDept);
+        deptService.updateDept(tempDept);
+        return AjaxResult.success();
+    }
+
+    @PostMapping("/getDept")
+    @ResponseBody
+    public List<Dept> getDept(Dept dept)
     {
         List<Dept> deptList = deptService.selectDeptList(dept);
         return deptList;
@@ -123,17 +179,8 @@ public class DeptController extends BaseController
             }else if(deptService.checkDeptExistUser(dept.getId())) {
                 return AjaxResult.warn("机构存在用户,不允许停用");
             }
-            //校验部门下是否存在线路
-            Line line=new Line();
-            line.setDeptId(dept.getId());
-            List<Line> lineList=lineService.selectLineList(line);
-            if(lineList!=null && !lineList.isEmpty()){
-                return AjaxResult.warn("机构存在线路,不允许删除");
-            }
             //校验部门下是否存在车站
-            Station station=new Station();
-            station.setDeptId(dept.getId());
-            List<Station> stationList=stationService.selectStationList(station);
+            List<Station> stationList=stationService.selectStationByDeptId(dept.getId());
             if(stationList!=null && !stationList.isEmpty()){
                 return AjaxResult.warn("机构存在车站,不允许删除");
             }
@@ -158,17 +205,8 @@ public class DeptController extends BaseController
         {
             return AjaxResult.warn("机构存在用户,不允许删除");
         }
-        //校验部门下是否存在线路
-        Line line=new Line();
-        line.setDeptId(id);
-        List<Line> lineList=lineService.selectLineList(line);
-        if(lineList!=null && !lineList.isEmpty()){
-            return AjaxResult.warn("机构存在线路,不允许删除");
-        }
         //校验部门下是否存在车站
-        Station station=new Station();
-        station.setDeptId(id);
-        List<Station> stationList=stationService.selectStationList(station);
+        List<Station> stationList=stationService.selectStationByDeptId(id);
         if(stationList!=null && !stationList.isEmpty()){
             return AjaxResult.warn("机构存在车站,不允许删除");
         }
@@ -204,6 +242,42 @@ public class DeptController extends BaseController
     public List<DeptZtree> treeData()
     {
         List<DeptZtree> ztrees = deptService.selectDeptTree(new Dept());
+        return ztrees;
+    }
+
+    /**
+     * 选择部门树:车间和工区
+     */
+    @GetMapping("/selectWorkDeptTree/{deptId}")
+    public String selectWorkDeptTree(@PathVariable("deptId") String deptId, ModelMap mmap)
+    {
+        mmap.put("dept", deptService.selectDeptById(deptId));
+        return prefix + "/workTree";
+    }
+
+    /**
+     * 加载部门列表树:车间和工区
+     */
+    @GetMapping("/workTreeData")
+    @ResponseBody
+    public List<DeptZtree> workTreeData() {
+        User user = ShiroUtils.getSysUser();
+        Dept curDept=deptService.selectDeptById(user.getDeptId());
+        Dept dept=new Dept();
+        if(!user.isAdmin()){
+            if("9".equals(curDept.getLevel())){
+                dept.setParentId(curDept.getId());
+            }else if("10".equals(curDept.getLevel())){
+                dept.setId(curDept.getId());
+                //当登录账户部门为工区时，查询出对应的车间
+                dept.setRemark(curDept.getParentId());
+            }else{
+                dept.setId("1");
+            }
+            List<DeptZtree> ztrees = deptService.selectWorkByDept(dept);
+            return ztrees;
+        }
+        List<DeptZtree> ztrees = deptService.selectWorkDeptTree(dept);
         return ztrees;
     }
 

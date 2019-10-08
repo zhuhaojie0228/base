@@ -60,6 +60,7 @@ public class LineServiceImpl implements ILineService
     public int insertLine(Line line)
     {
         line.setId(UUID.randomUUID().toString());
+        line.setSort(lineMapper.selectCurSort());
         line.setCreateBy(ShiroUtils.getLoginName());
         line.setCreateTime(DateUtils.getNowDate());
         return lineMapper.insertLine(line);

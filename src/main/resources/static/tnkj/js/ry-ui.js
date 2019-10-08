@@ -104,7 +104,7 @@
 							dataType: 'JSON',
 							success: function (data, status) {
 								if (status == "success") {
-									$.table.search();
+									$.table.refresh();
 									//$.modal.alertSuccess('提交数据成功')
 								}
 							},
@@ -1200,7 +1200,72 @@
                     $.modal.alertError(result.msg);
                 }
                 $.modal.closeLoading();
-            }
+            },
+			upOrDown:function(tempUrl,data,id,type){
+            	if($.common.isEmpty(data)){
+					data={};
+				}
+				var dataList;
+				$.ajax({
+					type: "post",
+					url: tempUrl + "/queryList",
+					async: false,
+					data: data,
+					dataType: 'JSON',
+					success: function(result) {
+						dataList=result;
+					}
+				});
+				var curIndex;
+				var curRow;
+				var tempRow;
+				for(var i=0;i<dataList.length;i++){
+					if(id==dataList[i].id){
+						curIndex=i+1;
+						if(type=='up'){
+							if(curIndex==1){
+								$.modal.alertWarning("当前数据已经是第一条数据，无需上移");
+								return;
+							}else{
+								curRow=dataList[i];
+								tempRow=dataList[i-1];
+							}
+						}
+						if(type=='down'){
+							if(curIndex==dataList.length){
+								$.modal.alertWarning("当前数据已经是最后一条数据，无需下移");
+								return;
+							}else{
+								curRow=dataList[i];
+								tempRow=dataList[i+1];
+							}
+						}
+						break;
+					}
+				}
+				$.operate.upOrDownRow(curRow,tempRow,tempUrl + "/edit");
+			},
+			upOrDownRow: function(curRow,tempRow,editUrl) {
+				var curSort=curRow.sort;
+				var tempSort=tempRow.sort;
+				curRow.sort=tempSort;
+				tempRow.sort=curSort;
+				$.ajax({
+					type: "post",
+					url: editUrl,
+					async: false,
+					data: curRow,
+					dataType: 'JSON'
+				});
+				$.ajax({
+					type: "post",
+					url: editUrl,
+					async: false,
+					data: tempRow,
+					dataType: 'JSON'
+				});
+				$.table.refresh();
+			}
         },
         // 校验封装处理
         validate: {

@@ -9,8 +9,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="number"    column="number"    />
         <result property="name"    column="name"    />
         <result property="shortName"    column="short_name"    />
-        <result property="deptId"    column="dept_id"    />
-        <result property="deptName"    column="dept_name"    />
         <result property="level"    column="level"    />
         <result property="lineNumber"    column="line_number"    />
         <result property="classId"    column="class_id"    />
@@ -24,8 +22,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectLineVo">
-        select l.id, l.number, l.name, l.short_name, l.dept_id, d.name as dept_name, l.level, l.line_number, l.class_id, l.sort, l.del_flag, l.remark, l.create_by, l.create_time, l.update_by, l.update_time
-        from sys_line l left join sys_dept d on l.dept_id = d.id
+        select l.id, l.number, l.name, l.short_name, l.level, l.line_number, l.class_id, l.sort, l.del_flag, l.remark, l.create_by, l.create_time, l.update_by, l.update_time
+        from sys_line l
     </sql>
 
     <select id="selectLineList" parameterType="Line" resultMap="LineResult">
@@ -34,13 +32,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="number != null  and number != ''"> and l.number = #{number}</if>
             <if test="name != null  and name != ''"> and l.name like concat('%', #{name}, '%')</if>
             <if test="shortName != null  and shortName != ''"> and l.short_name like concat('%', #{shortName}, '%')</if>
-            <if test="deptId != null  and deptId != ''"> and l.dept_id = #{deptId}</if>
             <if test="level != null  and level != ''"> and l.level = #{level}</if>
             <if test="lineNumber != null  and lineNumber != ''"> and l.line_number = #{lineNumber}</if>
             <if test="classId != null  and classId != ''"> and l.class_id = #{classId}</if>
             <if test="sort != null "> and l.sort = #{sort}</if>
         </where>
-        order by CAST(d.level AS UNSIGNED),d.sort,l.sort
+        order by l.sort
     </select>
     
     <select id="selectLineById" parameterType="String" resultMap="LineResult">
@@ -55,7 +52,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="number != null  and number != ''">number,</if>
             <if test="name != null  and name != ''">name,</if>
             <if test="shortName != null  and shortName != ''">short_name,</if>
-            <if test="deptId != null  and deptId != ''">dept_id,</if>
             <if test="level != null  and level != ''">level,</if>
             <if test="lineNumber != null  and lineNumber != ''">line_number,</if>
             <if test="classId != null  and classId != ''">class_id,</if>
@@ -72,7 +68,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="number != null  and number != ''">#{number},</if>
             <if test="name != null  and name != ''">#{name},</if>
             <if test="shortName != null  and shortName != ''">#{shortName},</if>
-            <if test="deptId != null  and deptId != ''">#{deptId},</if>
             <if test="level != null  and level != ''">#{level},</if>
             <if test="lineNumber != null  and lineNumber != ''">#{lineNumber},</if>
             <if test="classId != null  and classId != ''">#{classId},</if>
@@ -92,7 +87,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="number != null  and number != ''">number = #{number},</if>
             <if test="name != null  and name != ''">name = #{name},</if>
             <if test="shortName != null  and shortName != ''">short_name = #{shortName},</if>
-            <if test="deptId != null  and deptId != ''">dept_id = #{deptId},</if>
             <if test="level != null  and level != ''">level = #{level},</if>
             <if test="lineNumber != null  and lineNumber != ''">line_number = #{lineNumber},</if>
             <if test="classId != null  and classId != ''">class_id = #{classId},</if>
@@ -117,5 +111,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectCurSort" resultType="Long">
+        select (max(sort)+1) as sort from sys_line
+    </select>
     
 </mapper>

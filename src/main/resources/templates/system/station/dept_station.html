@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('车站管理列表')" />
+</head>
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <!--<h5>机构车站关联</h5>-->
+                        <div class="select-list">
+                            <ul>
+                                <li style="display:none;">
+                                    <p>归属线路：</p>
+                                    <input type="text" name="lineId" id="lineId"/>
+                                </li>
+                                <li>
+                                    <p>线路名称：</p>
+                                    <input type="text" name="lineName" id="lineName"  onclick="searchLineTree()"/>
+                                </li>
+                                <li style="display:none;">
+                                    <p>机构名称：</p>
+                                    <input type="text" name="deptId" id="deptId"/>
+                                </li>
+                                <li>
+                                    <p>机构名称：</p>
+                                    <input type="text" name="deptName" id="deptName"  onclick="searchDeptTree()"/>
+                                </li>
+                                <li>
+                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="save()"><i class="fa fa-search"></i>保存</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="height:400px;position:relative;">
+                        <select id="lineStation" class="form-control" style="width:200px;height:300px;margin-left:50px;float:left;position:absolute;" name="stationList" multiple>
+
+                        </select>
+                        <div style="width:50px;height:300px;margin-left:310px;float:left;position:absolute;">
+                            <button class="glyphicon glyphicon-step-forward" style="width:50px;margin-top:100px;" onclick="addStation()"></button>
+                            <button class="glyphicon glyphicon-fast-forward" style="width:50px;margin-top:50px;" onclick="addAllStation()"></button>
+                        </div>
+                        <select id="stationList" class="form-control" style="width:200px;height:300px;margin-left:430px;float:left;position:absolute;" name="stationList" multiple>
+
+                        </select>
+                        <div style="width:50px;height:300px;margin-left:700px;float:left;position:absolute;">
+                            <button class="glyphicon glyphicon-trash" style="width:50px;margin-top:130px;" onclick="delStation()"></button>
+                        </div>
+                        <!--<form id="stationForm" action="#" class="wizard-big">
+
+                        </form>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/station";
+
+
+        $(function() {
+            stationRefresh();
+        })
+
+        function stationRefresh(param){
+            if($.common.isEmpty(param)){
+                param={};
+            }
+            $("#lineStation").html('');
+            var dataList;
+            $.ajax({
+                type: "post",
+                url: prefix + "/queryList",
+                async: false,
+                data: param,
+                dataType: 'JSON',
+                success: function(result) {
+                    dataList=result;
+                }
+            });
+            if(dataList!=null && dataList.length>0){
+                for(var i=0;i<dataList.length;i++){
+                    $("#lineStation").append('<option value="'+dataList[i].id+'">'+dataList[i].name+'</option>');
+                }
+            }
+        }
+
+        function addStation(){
+            if($.common.isEmpty($("#deptId").val())){
+                $.modal.alertWarning("您好，机构名称为空，请检查！");
+                return;
+            }
+            var selOption=$("#lineStation option:selected");
+            if($.common.isNotEmpty(selOption.val()) && $.common.isNotEmpty(selOption.text())){
+                var flag=$("option[value="+selOption.val()+"]","#stationList").length;
+                if(flag==0){
+                    $("#stationList").append('<option value="'+selOption.val()+'">'+selOption.text()+'</option>');
+                }
+            }
+        }
+
+        function addAllStation(){
+            if($.common.isEmpty($("#deptId").val())){
+                $.modal.alertWarning("您好，机构名称为空，请检查！");
+                return;
+            }
+            var allOption=$("#lineStation option");
+            if(allOption!=null && allOption.length>0){
+                for(var i=0;i<allOption.length;i++){
+                    if($.common.isNotEmpty(allOption[i].value) && $.common.isNotEmpty(allOption[i].text)){
+                        var flag=$("option[value="+allOption[i].value+"]","#stationList").length;
+                        if(flag==0){
+                            $("#stationList").append('<option value="'+allOption[i].value+'">'+allOption[i].text+'</option>');
+                        }
+                    }
+                }
+            }
+        }
+
+        function delStation(){
+            if($.common.isEmpty($("#deptId").val())){
+                $.modal.alertWarning("您好，机构名称为空，请检查！");
+                return;
+            }
+            var selOption=$("#stationList option:selected");
+            if($.common.isNotEmpty(selOption.val()) && $.common.isNotEmpty(selOption.text())){
+                $("#stationList option[value='"+selOption.val()+"']").remove();
+            }
+        }
+
+        function save(){
+            var deptId=$("#deptId").val();
+            if($.common.isEmpty(deptId)){
+                $.modal.alertWarning("您好，机构名称为空，请检查！");
+                return;
+            }
+            var levelList;
+            $.ajax({
+                type: "post",
+                url: ctx + "system/dept/getDept",
+                async: false,
+                data: {"id":deptId},
+                dataType: 'JSON',
+                success: function(result) {
+                    levelList=result;
+                }
+            });
+            if(levelList!=null && levelList.length==1){
+                if(levelList[0].level!='10'){
+                    $.modal.alertWarning("车站只能跟工区关联，请重新选择");
+                    return;
+                }
+            }
+            var stationIds='';
+            var stationList=$("#stationList option");
+            for(var i=0;i<stationList.length;i++){
+                var station=stationList[i];
+                if($.common.isEmpty(stationIds)){
+                    stationIds=station.value;
+                }else{
+                    stationIds=stationIds+','+station.value;
+                }
+            }
+            $.ajax({
+                type: "post",
+                url: prefix + "/saveRel",
+                async: false,
+                data: {"deptId":deptId,"stationIds":stationIds},
+                dataType: 'JSON',
+                success: function(result) {
+                    if(result.code=='0'){
+                        $.modal.alertSuccess("您好，机构车站关联成功！");
+                    }else{
+                        $.modal.alertError("您好，机构车站关联失败，请检查！");
+                    }
+                }
+            });
+        }
+
+        /*车站管理-线路关联-选择部门树*/
+        function searchLineTree() {
+            var deptId = $.common.isEmpty($("#lineId").val()) ? "1" : $("#lineId").val();
+            var url = ctx + "system/line/selectLineTree/" + deptId;
+            var options = {
+                title: '选择线路',
+                width: "380",
+                url: url,
+                callBack: doLineSearch
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doLineSearch(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if ($.tree.notAllowParents(tree)) {
+                var body = layer.getChildFrame('body', index);
+                $("#lineId").val(body.find('#treeId').val());
+                $("#lineName").val(body.find('#treeName').val());
+                stationRefresh({"lineId":body.find('#treeId').val()});
+                layer.close(index);
+            }
+        }
+
+        /*车站管理-部门关联-选择部门树*/
+        function searchDeptTree() {
+            var deptId = $.common.isEmpty($("#deptId").val()) ? "1" : $("#deptId").val();
+            var url = ctx + "system/dept/selectWorkDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doDeptSearch
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doDeptSearch(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if ($.tree.notAllowParents(tree)) {
+                var body = layer.getChildFrame('body', index);
+                var deptId=body.find('#treeId').val();
+                if($.common.isNotEmpty(deptId)){
+                    var levelList;
+                    $.ajax({
+                        type: "post",
+                        url: ctx + "system/dept/getDept",
+                        async: false,
+                        data: {"id":deptId},
+                        dataType: 'JSON',
+                        success: function(result) {
+                            levelList=result;
+                        }
+                    });
+                    if(levelList!=null && levelList.length==1){
+                        $("#deptId").val(deptId);
+                        $("#deptName").val(body.find('#treeName').val());
+                        $("#stationList").html('');
+                        var url;
+                        var param;
+                        if(levelList[0].level=='10'){
+                            url=prefix + "/queryStation";
+                            param={"deptId":deptId};
+                        }else if(levelList[0].level=='9'){
+                            url=prefix + "/queryChiStation";
+                            param={"parentId":deptId};
+                        }else{
+                            $.modal.alertWarning("机构名称只能跟车间或者工区，请重新选择");
+                            return;
+                        }
+                        var dataList;
+                        $.ajax({
+                            type: "post",
+                            url: url,
+                            async: false,
+                            data: param,
+                            dataType: 'JSON',
+                            success: function(result) {
+                                dataList=result;
+                            }
+                        });
+                        if(dataList!=null && dataList.length>0){
+                            for(var i=0;i<dataList.length;i++){
+                                $("#stationList").append('<option value="'+dataList[i].id+'">'+dataList[i].name+'</option>');
+                            }
+                        }
+                    }
+                }
+                layer.close(index);
+            }
+        }
+    </script>
+</body>
+</html>

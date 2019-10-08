@@ -4,6 +4,9 @@
 	<th:block th:include="include :: header('用户列表')" />
 	<th:block th:include="include :: layout-latest-css" />
 	<th:block th:include="include :: ztree-css" />
+	<style type="text/css">
+		td{white-space: nowrap}
+	</style>
 </head>
 <body class="gray-bg">
 	<div class="ui-layout-west">
@@ -115,16 +118,13 @@
 		        exportUrl: prefix + "/export",
 		        importUrl: prefix + "/importData",
 		        importTemplateUrl: prefix + "/importTemplate",
-		        sortName: "createTime",
-		        sortOrder: "desc",
 		        modalName: "用户",
 		        columns: [{
 		            checkbox: true
 		        },
 		        {
 		            field: 'loginName',
-		            title: '登录名称',
-		            sortable: true
+		            title: '登录名称'
 		        },
 		        {
 		            field: 'userName',
@@ -153,14 +153,16 @@
 		        },
 		        {
 		            field: 'createTime',
-		            title: '创建时间',
-		            sortable: true
+		            title: '创建时间'
 		        },
 		        {
 		            title: '操作',
 		            align: 'center',
 		            formatter: function(value, row, index) {
 		                var actions = [];
+		                if($.common.isNotEmpty($("#deptId").val())){
+							actions.push('<a><i class="fa fa-long-arrow-up" onclick="upOrDown(\'' +prefix+'\',\''+row.deptId+'\',\''+ row.userId +'\',\''+'up'+ '\')"></i></a>   <a onclick="upOrDown(\'' +prefix+'\',\''+row.deptId+'\',\''+ row.userId +'\',\''+'down'+ '\')"><i class="fa fa-long-arrow-down"></i></a> ');
+						}
 		                actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.editTab(\'' + row.userId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
 		                actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.userId + '\')"><i class="fa fa-remove"></i>删除</a> ');
 		                actions.push('<a class="btn btn-info btn-xs ' + resetPwdFlag + '" href="javascript:void(0)" onclick="resetPwd(\'' + row.userId + '\')"><i class="fa fa-key"></i>重置</a>');
@@ -202,6 +204,9 @@
 		
 		$('#btnRefresh').click(function() {
 			queryDeptTree();
+			$("#deptId").val('');
+			$("#parentId").val('');
+			$.table.search();
 		});
 
 		/* 用户管理-部门 */
@@ -237,6 +242,62 @@
 			$.modal.confirm("确认要启用用户吗？", function() {
 				$.operate.post(prefix + "/changeStatus", { "userId": userId, "status": 0 });
 		    })
+		}
+
+		function upOrDown(tempUrl,data,id,type){
+			var param={};
+			param["deptId"]=data;
+			var dataList;
+			$.ajax({
+				type: "post",
+				url: tempUrl + "/queryList",
+				async: false,
+				data: param,
+				dataType: 'JSON',
+				success: function(result) {
+					dataList=result;
+				}
+			});
+			var curIndex;
+			var curRow={};
+			var tempRow={};
+			for(var i=0;i<dataList.length;i++){
+				if(id==dataList[i].userId){
+					curIndex=i+1;
+					if(type=='up'){
+						if(curIndex==1){
+							$.modal.alertWarning("当前数据已经是第一条数据，无需上移");
+							return;
+						}else{
+							/*curRow=dataList[i];
+							tempRow=dataList[i-1];*/
+							curRow['userId']=dataList[i].userId;
+							curRow['sort']=dataList[i].sort;
+							curRow['loginName']=dataList[i].loginName;
+							tempRow['userId']=dataList[i-1].userId;
+							tempRow['sort']=dataList[i-1].sort;
+							tempRow['loginName']=dataList[i-1].loginName;
+						}
+					}
+					if(type=='down'){
+						if(curIndex==dataList.length){
+							$.modal.alertWarning("当前数据已经是最后一条数据，无需下移");
+							return;
+						}else{
+							/*curRow=dataList[i];
+							tempRow=dataList[i+1];*/
+							curRow['userId']=dataList[i].userId;
+							curRow['sort']=dataList[i].sort;
+							curRow['loginName']=dataList[i].loginName;
+							tempRow['userId']=dataList[i+1].userId;
+							tempRow['sort']=dataList[i+1].sort;
+							tempRow['loginName']=dataList[i+1].loginName;
+						}
+					}
+					break;
+				}
+			}
+			$.operate.upOrDownRow(curRow,tempRow,tempUrl + "/edit");
 		}
 	</script>
 </body>

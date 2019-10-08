@@ -121,4 +121,9 @@ public interface UserMapper
      * @return 结果
      */
     public User checkEmailUnique(String email);
+
+    /*
+     * 获取排序号
+     * */
+    public Long selectCurSort();
 }

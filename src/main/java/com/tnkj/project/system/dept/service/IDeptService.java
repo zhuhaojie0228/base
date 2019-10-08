@@ -31,6 +31,22 @@ public interface IDeptService
     public List<DeptZtree> selectDeptTree(Dept dept);
 
     /**
+     * 查询部门管理树：车间和工区
+     *
+     * @param dept 部门信息
+     * @return 所有部门信息
+     */
+    public List<DeptZtree> selectWorkDeptTree(Dept dept);
+
+    /**
+     * 根据当前用户部门查询部门管理树：车间和工区
+     *
+     * @param dept 部门信息
+     * @return 所有部门信息
+     */
+    public List<DeptZtree> selectWorkByDept(Dept dept);
+
+    /**
      * 根据角色ID查询菜单
      *
      * @param role 角色对象

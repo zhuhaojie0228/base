@@ -206,6 +206,7 @@ public class UserServiceImpl implements IUserService
     public int insertUser(User user)
     {
         user.setUserId(UUID.randomUUID().toString());
+        user.setSort(userMapper.selectCurSort());
         user.setPassword(passwordService.encryptPassword(user.getPassword()));
         user.setCreateBy(ShiroUtils.getLoginName());
         // 新增用户信息

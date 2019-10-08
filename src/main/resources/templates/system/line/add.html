@@ -37,27 +37,6 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">归属部门：</label>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <input name="deptName" onclick="selectDeptTree()" id="treeName" type="text" placeholder="请选择归属部门" class="form-control">
-                                <span class="input-group-addon"><i class="fa fa-search"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">排序号<span style="color: red; ">*</span>：</label>
-                        <div class="col-sm-8">
-                            <input id="sort" name="sort" class="form-control" type="text" maxlength="5" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
                         <label class="col-sm-4 control-label">线路级别：</label>
                         <div class="col-sm-8">
                             <select id="level" name="level" class="form-control m-b" th:with="type=${@dict.getType('sys_line_level')}">
@@ -118,35 +97,7 @@
 
         function submitHandler() {
             if ($.validate.form()) {
-                if($.common.isNotNum($("#sort").val())){
-                    $.modal.alertWarning("您好,排序号只允许输入大于0的整数,请检查!");
-                    return;
-                }
                 $.operate.save(prefix + "/add", $('#form-line-add').serialize());
-            }
-        }
-
-        /*线路管理-新增-选择部门树*/
-        function selectDeptTree() {
-            var treeId = $("#treeId").val();
-            var deptId = $.common.isEmpty(treeId) ? "1" : $("#treeId").val();
-            var url = ctx + "system/dept/selectDeptTree/" + deptId;
-            var options = {
-                title: '选择部门',
-                width: "380",
-                url: url,
-                callBack: doSubmit
-            };
-            $.modal.openOptions(options);
-        }
-
-        function doSubmit(index, layero){
-            var tree = layero.find("iframe")[0].contentWindow.$._tree;
-            if ($.tree.notAllowParents(tree)) {
-                var body = layer.getChildFrame('body', index);
-                $("#treeId").val(body.find('#treeId').val());
-                $("#treeName").val(body.find('#treeName').val());
-                layer.close(index);
             }
         }
     </script>

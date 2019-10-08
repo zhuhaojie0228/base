@@ -108,6 +108,8 @@ public class User extends BaseEntity
     /** 岗位组 */
     private Long[] postIds;
 
+    private Long sort;
+
     public String getUserId()
     {
         return userId;
@@ -350,6 +352,14 @@ public class User extends BaseEntity
         this.phone = phone;
     }
 
+    public Long getSort() {
+        return sort;
+    }
+
+    public void setSort(Long sort) {
+        this.sort = sort;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -376,6 +386,7 @@ public class User extends BaseEntity
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
             .append("dept", getDept())
+            .append("sort", getSort())
             .toString();
     }
 }

@@ -48,7 +48,7 @@ public class Dept extends BaseEntity
     private String delFlag;
 
     /** 排序 */
-    private String sort;
+    private Long sort;
 
     /** 值班电话 */
     private String phone;
@@ -168,11 +168,11 @@ public class Dept extends BaseEntity
         this.classid = classid;
     }
 
-    public String getSort() {
+    public Long getSort() {
         return sort;
     }
 
-    public void setSort(String sort) {
+    public void setSort(Long sort) {
         this.sort = sort;
     }
 

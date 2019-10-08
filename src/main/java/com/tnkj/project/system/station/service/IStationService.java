@@ -52,10 +52,35 @@ public interface IStationService
     public int deleteStationByIds(String ids);
 
     /**
+     * 根据机构ID查询车站管理列表
+     *
+     * @param deptId 机构ID
+     * @return 车站管理集合
+     */
+    public List<Station> selectStationByDeptId(String deptId);
+
+    /**
+     * 根据机构父级ID查询车站管理列表
+     *
+     * @param parentId 机构父级ID
+     * @return 车站管理集合
+     */
+    public List<Station> selStationByDeptParId(String parentId);
+
+    /**
      * 删除车站管理信息
      * 
      * @param id 车站管理ID
      * @return 结果
      */
     public int deleteStationById(String id);
+
+    /**
+     * 保存机构车站关联关系
+     *
+     * @param deptId 机构ID
+     * @param stationIds 车站IDs
+     * @return 结果
+     */
+    public int saveRel(String deptId,String stationIds);
 }

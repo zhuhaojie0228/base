@@ -134,6 +134,7 @@ private MessageMapper messageMapper;
         userMessage.put("phonenumber",user.getPhonenumber());
         userMessage.put("status",user.getStatus());
         userMessage.put("delFlag",user.getDelFlag());
+        userMessage.put("sort",user.getSort());
         return userMessage;
     }
 

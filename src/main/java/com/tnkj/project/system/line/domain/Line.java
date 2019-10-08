@@ -30,13 +30,6 @@ public class Line extends BaseEntity
     @Excel(name = "线路名称", readConverterExp = "缩=写")
     private String shortName;
 
-    /** 归属部门ID */
-    private String deptId;
-
-    /** 归属部门 */
-    @Excel(name = "归属部门")
-    private String deptName;
-
     /** 线路级别0：主线（被分段），1：主线，2：支线，3：区段 */
     @Excel(name = "线路级别",readConverterExp = "0=主线(被分段),1=主线,2=支线,3=区段")
     private String level;
@@ -92,16 +85,7 @@ public class Line extends BaseEntity
     {
         return shortName;
     }
-    public void setDeptId(String deptId) 
-    {
-        this.deptId = deptId;
-    }
-
-    public String getDeptId() 
-    {
-        return deptId;
-    }
-    public void setLevel(String level) 
+    public void setLevel(String level)
     {
         this.level = level;
     }
@@ -147,14 +131,6 @@ public class Line extends BaseEntity
         return delFlag;
     }
 
-    public String getDeptName() {
-        return deptName;
-    }
-
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -162,8 +138,6 @@ public class Line extends BaseEntity
             .append("number", getNumber())
             .append("name", getName())
             .append("shortName", getShortName())
-            .append("deptId", getDeptId())
-            .append("deptName", getDeptName())
             .append("level", getLevel())
             .append("lineNumber", getLineNumber())
             .append("classId", getClassId())
