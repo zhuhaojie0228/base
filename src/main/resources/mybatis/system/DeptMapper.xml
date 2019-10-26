@@ -170,8 +170,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  		<set>
  			<if test="name != null and name != ''">name = #{name},</if>
 			<if test="shortName != null and shortName != ''">short_name = #{shortName},</if>
-			<if test="level != null and level != ''">level = #{level},</if>
-			<if test="kind != null and kind != ''">kind = #{kind},</if>
+			<if test="level != null">level = #{level},</if>
+			<if test="kind != null">kind = #{kind},</if>
 			<if test="classid != null">classid = #{classid},</if>
 			<if test="phone != null and phone != ''">phone = #{phone},</if>
 			<if test="sort != null">sort = #{sort},</if>
